@@ -27,7 +27,7 @@ public interface ListExpression {
      */
     public static ListExpression parse(String input) {
         try {
-            return NornParser.parse(input);
+            return ListExpressionParser.parse(input);
         } catch (UnableToParseException e) {
             throw new IllegalArgumentException("expression invalid");
         }   
