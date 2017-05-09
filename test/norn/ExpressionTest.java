@@ -166,7 +166,6 @@ public class ExpressionTest {
     @Test
     public void testToStringDefinition() {
         final ListExpression e = ListExpression.parse("a = b@mit.edu");
-        System.out.println(e instanceof Definition);
         assertEquals("a = b@mit.edu returns b@mit.edu", "a = b@mit.edu", e.toString());
     }
     
