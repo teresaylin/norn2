@@ -75,11 +75,19 @@ public class ListExpressionParser {
         case SEQUENCE: // sequence ::= definition (';' definition)*;
         {
             final List<ParseTree<ListExpressionGrammar>> definitions = parseTree.children();
-            ListExpression currentExpression = new Recipient("should never happen");
+            ListExpression currentExpression = new Recipient("@should never happen");
             for (ParseTree<ListExpressionGrammar> i: definitions) {
                 currentExpression = makeAbstractSyntaxTree(i);
             }
             return currentExpression; // only the last one should be returned
+            /*
+            final List<ParseTree<ListExpressionGrammar>> children = parseTree.children();
+            ListExpression expression = makeAbstractSyntaxTree(children.get(0));
+            for (int i = 1; i < children.size(); ++i) {
+                expression = new Sequence(expression, makeAbstractSyntaxTree(children.get(i)));
+            }
+            return expression;
+            */
         }
         case DEFINITION: // definition ::= (listname '=')? union;
             {
@@ -128,6 +136,8 @@ public class ListExpressionParser {
         case ADDRESS: // address ::= ([A-Za-z0-9_\-\.]+[@][A-Za-z0-9_\-\.]+)?;
             {
                 final String address = parseTree.text();
+                if(address.equals(""))
+                    return new Empty();
                 return new Recipient(address);
             }
         case LISTNAME: // listname ::= [A-Za-z0-9_\-\.]+;

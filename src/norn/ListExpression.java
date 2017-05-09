@@ -11,7 +11,7 @@ import lib6005.parser.*;
 public interface ListExpression {
     
     // Datatype Definition
-    // ListExpression = Empty 
+    // ListExpression = Empty() 
     //                  + Recipient(emailAddress: String)
     //                  + Union(left: ListExpression, right: ListExpression)
     //                  + Difference(left: ListExpression, right: ListExpression)
@@ -42,7 +42,7 @@ public interface ListExpression {
      *        in environment.
      * @return the Set of unique recipients represented
      */
-    public Set<Recipient> recipients(Map<String, ListExpression> environment);
+    public Set<Recipient> recipients();
     
     /**
      * Determine all list definitions in a list expression.

@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
+
 import lib6005.parser.UnableToParseException;
 
 /**
@@ -54,6 +56,13 @@ public class Main {
             if (input.isEmpty()) {
                 System.out.println(EMPTY_LIST);
                 continue; // Gives nothing back to user and waits for further input.
+            }
+            try{
+                ListExpression parsed = ListExpression.parse(input);
+                Set<Recipient> printout = parsed.recipients();
+                System.out.println(printout.toString().replaceAll("[\\[\\]]", ""));
+            } catch(IllegalArgumentException e){
+                System.out.println("expression unable to be parsed");
             }
         }
     }

@@ -40,7 +40,7 @@ public class Recipient implements ListExpression {
     }
     
     @Override
-    public Set<Recipient> recipients(Map<String, ListExpression> environment) {
+    public Set<Recipient> recipients() {
         Set<Recipient> recipients = new HashSet<>();
         recipients.add(this);
         return recipients;

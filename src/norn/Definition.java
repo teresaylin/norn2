@@ -44,8 +44,8 @@ public class Definition implements ListExpression {
     }
     
     @Override
-    public Set<Recipient> recipients(Map<String, ListExpression> environment) {
-        return new HashSet<Recipient>(value.recipients(environment));
+    public Set<Recipient> recipients() {
+        return new HashSet<Recipient>(value.recipients());
     }
     
     @Override
