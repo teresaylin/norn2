@@ -51,7 +51,8 @@ public class ListExpressionParser {
      */
     public static ListExpression parse(final String string) throws UnableToParseException {
         // parse the example into a parse tree
-        final ParseTree<ListExpressionGrammar> parseTree = parser.parse(string);
+        String lowercased = string.toLowerCase();
+        final ParseTree<ListExpressionGrammar> parseTree = parser.parse(lowercased);
 
         // make an AST from the parse tree
         final ListExpression expression = makeAbstractSyntaxTree(parseTree);
