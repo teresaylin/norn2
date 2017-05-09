@@ -1,6 +1,5 @@
 package norn;
 
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,20 +21,23 @@ public class Sequence implements ListExpression {
      * @param right the right expression in this sequence
      */
     public Sequence(ListExpression left, ListExpression right) {
-        
+        this.left = left;
+        this.right = right;
+        checkRep();
     }
     
     /*
      * Check that the rep invariant holds.
      */
     private void checkRep() {
-        
+        assert left != null;
+        assert right != null;
     }
 
     @Override
     public Set<Recipient> recipients() {
-        // TODO Auto-generated method stub
-        return null;
+        // e ; f represents the recipients produced by f
+        return right.recipients();
     }
     
     /*
@@ -45,20 +47,19 @@ public class Sequence implements ListExpression {
      */
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        return left.toString() + "; " + right.toString();
     }
     
     @Override
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return super.equals(obj);
+        if (!(obj instanceof Sequence)) return false;
+        Sequence that = (Sequence) obj;
+        return left.equals(that.left) && right.equals(that.right);
     }
     
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
-        return super.hashCode();
+        return left.hashCode() + right.hashCode();
     }
 
 }
