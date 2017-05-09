@@ -75,20 +75,12 @@ public class ListExpressionParser {
             
         case SEQUENCE: // sequence ::= definition (';' definition)*;
         {
-            final List<ParseTree<ListExpressionGrammar>> definitions = parseTree.children();
-            ListExpression currentExpression = new Recipient("@should never happen");
-            for (ParseTree<ListExpressionGrammar> i: definitions) {
-                currentExpression = makeAbstractSyntaxTree(i);
-            }
-            return currentExpression; // only the last one should be returned
-            /*
             final List<ParseTree<ListExpressionGrammar>> children = parseTree.children();
             ListExpression expression = makeAbstractSyntaxTree(children.get(0));
-            for (int i = 1; i < children.size(); ++i) {
+            for (int i = 1; i < children.size(); i++) {
                 expression = new Sequence(expression, makeAbstractSyntaxTree(children.get(i)));
             }
             return expression;
-            */
         }
         case DEFINITION: // definition ::= (listname '=')? union;
             {
