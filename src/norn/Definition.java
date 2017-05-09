@@ -54,7 +54,7 @@ public class Definition implements ListExpression {
      */
     @Override
     public String toString() {
-        return name.toString() + " = " + value.toString();
+        return name + " = " + value.toString();
     }
     
     @Override

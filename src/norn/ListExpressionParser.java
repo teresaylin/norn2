@@ -97,6 +97,7 @@ public class ListExpressionParser {
                     Definition assignment = new Definition(parseTree.children().get(0).text(),
                             makeAbstractSyntaxTree(parseTree.children().get(1)));
                     environment.put(parseTree.children().get(0).text(), assignment);
+                    return assignment;
                 }
                 return makeAbstractSyntaxTree(parseTree.children().get(parseTree.children().size() - 1));
             }

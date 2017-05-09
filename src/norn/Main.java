@@ -15,20 +15,29 @@ import lib6005.parser.UnableToParseException;
  * 
  * This is the interactive console for processing and analyzing email list expressions.
  * It supports user-inputted email list expressions, defined by the specification in the
- * Norn project handout. That is, list expressions are sets of recipients who should
- * receive email messages.
- *
- * Operators include , (union), ! (difference), * (intersection), = (definition), and
- * ; (sequencing). The order of operations is as follows in descending order:
- * '*', '!', ',', '=', and ';'. The user may nest subexpressions in parentheses.
+ * Norn2 project handout. 
+ * 
+ * List expressions are sets of recipients who should receive email messages. A list 
+ * expression may be an expression, a sequence of list expressions, a list name (set of 
+ * recipients of a mailing list), an email address (single recipient), or an empty string.
+ * 
+ * Expressions use the following operators: 
+ *      , (union)
+ *      ! (difference)
+ *      * (intersection)
+ *      = (definition)
+ *      ; (sequencing)
+ * The order of operations in descending order is:
+ * '*', '!', ',', '=', and ';'. The user may also nest subexpressions in parentheses.
  *
  * A list expression may define a list name: listname = e defines listname as the expression
- * e and returns the set of recipients of e. Any defined expressions may be assumed as stored
- * in memory, ready to use.
+ * e and returns the set of recipients of e. List names are nonempty case-insensitive strings 
+ * of letters, digits, underscores, dashes, and periods. 
  *
- * Sequencing is also permitted: consider x = a@mit.edu,b@mit.edu ; x * b@mit.edu. After
- * substituting for x in the second part of the expression, this expression is equivalent
- * to (a@mit.edu,b@mit.edu) * b@mit.edu, which represents the single recipient b@mit.edu.
+ * Sequencing of list expressions or list definitions:
+ * Ex: x = a@mit.edu,b@mit.edu ; x * b@mit.edu. After substituting for x in the second part 
+ * of the expression, this expression is equivalent to (a@mit.edu,b@mit.edu) * b@mit.edu, 
+ * which represents the single recipient b@mit.edu.
  *
  * The output of this console is an order-independent view of the emails specified in an email
  * list expression.
