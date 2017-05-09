@@ -37,9 +37,6 @@ public interface ListExpression {
      * Determines the set of unique recipients represented by the current ListExpression,
      * evaluating all list names completely. Throws IllegalArgumentException if expression contains
      * a list name that was not previously defined
-     * @param environment Map of list definitions (name --> list expression) to use in 
-     *        evaluating list names where all list names in the current ListExpression are
-     *        in environment.
      * @return the Set of unique recipients represented
      */
     public Set<Recipient> recipients();
