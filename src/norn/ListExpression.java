@@ -16,8 +16,8 @@ public interface ListExpression {
     //                  + Union(left: ListExpression, right: ListExpression)
     //                  + Difference(left: ListExpression, right: ListExpression)
     //                  + Intersect(left: ListExpression, right: ListExpression)
-    //                  + Definition(name: Name, value: ListExpression) 
-    //                  + Name(name: String)
+    //                  + Definition(name: String, value: ListExpression)
+    //                  + Sequence(left: ListExpression, right: ListExpression)
     
     /**
      * Parse an input according to the grammar in NornGrammar.g.
