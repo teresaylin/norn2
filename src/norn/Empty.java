@@ -20,11 +20,6 @@ public class Empty implements ListExpression {
     public Set<Recipient> recipients() {
         return Collections.emptySet();
     }
-    
-    @Override
-    public Map<String, ListExpression> environment() {
-        return Collections.emptyMap();
-    }
 
     /**
      * Returned String is the empty String.

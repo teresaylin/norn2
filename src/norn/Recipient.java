@@ -45,12 +45,7 @@ public class Recipient implements ListExpression {
         recipients.add(this);
         return recipients;
     }
-    
-    @Override
-    public Map<String, ListExpression> environment() {
-        return Collections.emptyMap();
-    }
-    
+   
     /**
      * The returned String is the email address belonging to
      * this Recipient.

@@ -47,13 +47,6 @@ public class Union implements ListExpression {
         return allRecipients;
     }
     
-    @Override
-    public Map<String, ListExpression> environment() {
-        Map<String, ListExpression> environment = new HashMap<>(left.environment());
-        environment.putAll(right.environment());
-        return environment;
-    }
-    
     /**
      * The returned String has the format 
      *      (leftList.toString, rightList.toString)

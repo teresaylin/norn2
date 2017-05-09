@@ -42,12 +42,6 @@ public interface ListExpression {
     public Set<Recipient> recipients();
     
     /**
-     * Determine all list definitions in a list expression.
-     * @return a map of list names to their corresponding expressions
-     */
-    public Map<String, ListExpression> environment();
-    
-    /**
      * @return a parsable representation of this listexpression, such that
      * for all e:ListExpression, e.equals(ListExpression.parse(e.toString())).
      */

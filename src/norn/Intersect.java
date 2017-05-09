@@ -48,14 +48,7 @@ public class Intersect implements ListExpression {
         }
         return intersection;
     }
-    
-    @Override
-    public Map<String, ListExpression> environment() {
-        Map<String, ListExpression> environment = new HashMap<>(left.environment());
-        environment.putAll(right.environment());
-        return environment;
-    }
-    
+
     /**
      * The returned String has the format 
      *  (left.toString * right.toString)

@@ -49,13 +49,6 @@ public class Difference implements ListExpression {
         }
         return difference;
     }
-    
-    @Override
-    public Map<String, ListExpression> environment() {
-        Map<String, ListExpression> environment = new HashMap<>(left.environment());
-        environment.putAll(right.environment());
-        return environment;
-    }
 
     /**
      * The returned String has the format 

@@ -48,13 +48,6 @@ public class Definition implements ListExpression {
         return new HashSet<Recipient>(value.recipients());
     }
     
-    @Override
-    public Map<String, ListExpression> environment() {
-        Map<String, ListExpression> environment = new HashMap<>();
-        environment.put(name.toString(), value);
-        return environment;
-    }
-    
     /**
      * Returned String has the format: 
      *      name = value.toString()
