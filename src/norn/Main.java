@@ -49,6 +49,74 @@ import lib6005.parser.UnableToParseException;
  *
  * If given no input, this console proceeds to wait until valid input is given.
  */
+
+/*
+ * T E S T S
+ * 
+ * L O A D
+ * test loading dependent list definitions
+ *      !load loadtest1 --> \n
+ *      lunch --> brie@whole.wheat, crouton@tomato.bisque
+ *      soup --> crouton@tomato.bisque
+ *      bread --> brie@whole.wheat
+ * test loading list definitions dependent on previously entered lists
+ *      dogs = corgi@dog.com, poodle@dog.com, wolf@dog.com --> corgi@dog.com, poodle@dog.com, wolf@dog.com
+ *      pets = poodle@dog.com, bombay@cat.com, corgi@dog.com --> poodle@dog.com, bombay@cat.com, corgi@dog.com
+ *      !load loadtest2 --> \n
+ *      petdogs --> corgi@dog.com, poodle@dog.com
+ *      
+ * S A V E
+ * test 0 list definitions previously entered
+ *      !save savetest1 --> \n
+ *      [savetest1 should be an empty file]
+ * test 1 list definition previously entered
+ *      dogs = corgi@dog.com, poodle@dog.com, wolf@dog.com --> corgi@dog.com, poodle@dog.com, wolf@dog.com
+ *      !save savetest2 --> \n
+ *      [savetest2 should contain only one line with text: dogs = corgi@dog.com, poodle@dog.com, wolf@dog.com]
+ * test > 1 list definitions previously entered
+ *      gryffindor = harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts --> harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
+ *      quidditch = harry@hogwarts, ron@hogwarts, draco@hogwarts, cedric@hogwarts --> harry@hogwarts, ron@hogwarts, draco@hogwarts, cedric@hogwarts
+ *      sportsfans = gryffindor ! quidditch
+ *      !save savetest3
+ *      [savetest3 should contain 3 lines:
+ *          gryffindor = harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
+ *          quidditch = harry@hogwarts, ron@hogwarts, draco@hogwarts, cedric@hogwarts
+ *          sportsfans = hermione@hogwarts, neville@hogwarts]
+ *          
+ * U N D E F I N E D  L I S T S
+ * test undefined name alone
+ *      a --> {}
+ * test undefined name in larger expression
+ *      gryffindor = harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts --> harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
+ *      gryffindor ! slytherin --> harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
+ * 
+ * E D I T E D  L I S T S
+ * test when no definitions are dependent on the edited definition(s)
+ *      p --> {}
+ *      p = a@a --> a@a
+ *      p --> a@a
+ * test when edited list is dependent on itself
+ *      cats = bombay@cat.com, tuxedo@cat.com --> bombay@cat.com, tuxedo@cat.com
+ *      cats = cats * bombay@cat.com --> bombay@cat.com
+ * test when some definitions are dependent on the edited definition(s)
+ *      gryffindor = harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts --> harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
+ *      students = gryffindor ! prefects --> harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
+ *      prefects = hermione@hogwarts, ron@hogwarts --> hermione@hogwarts, ron@hogwarts
+ *      students --> harry@hogwarts, neville@hogwarts
+ * 
+ * M A I L  L O O P S
+ * test loop created by 2 mutually recursive list definitions
+ *      a = a@a --> a@a
+ *      b = a --> a@a
+ *      a = b --> [error message]
+ * test loops created by > 2 mutually recursive list definitions
+ *      a = a@a --> a@a
+ *      b = a --> a@a
+ *      c = b --> a@a
+ *      a = c --> [error message]
+ */
+
+
 public class Main {
     public static final String EMPTY_LIST = "{}";
     private static final String LOAD_COMMAND = "!load";
@@ -94,7 +162,8 @@ public class Main {
     /**
      * Reads in a file and parses the file, if the file contains a valid list expression.
      * 
-     * @param file The name of the file to be loaded
+     * @param file The name of the file to be loaded. Cannot contain newlines. 
+     * The contents of the file should be a single valid list expression. 
      * @return true if file was successfully read, false otherwise
      */
     private static boolean load(File file) {
@@ -102,9 +171,9 @@ public class Main {
     }
     
     /**
-     * Saves a single valid list expression to a file.
-     * @param fileName The name of the file to be saved
-     * @param expression
+     * Saves all currently-defined named lists to a file.
+     * @param fileName The name of the file to be written
+     * @param expression 
      * @return true if expression was successfully saved to fileName
      */
     private static boolean save(String fileName, ListExpression expression) {
