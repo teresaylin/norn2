@@ -39,7 +39,7 @@ public class Difference implements ListExpression {
     }
     
     @Override
-    public Set<Recipient> recipients() {
+    public Set<Recipient> recipients(Map<String, Definition> environment) {
         Set<Recipient> difference = new HashSet<>();
         Set<Recipient> rightRecipients = right.recipients();
         for (Recipient l : left.recipients()) {

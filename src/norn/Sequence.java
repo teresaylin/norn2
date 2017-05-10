@@ -1,5 +1,6 @@
 package norn;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,7 +36,7 @@ public class Sequence implements ListExpression {
     }
 
     @Override
-    public Set<Recipient> recipients() {
+    public Set<Recipient> recipients(Map<String, Definition> environment) {
         // e ; f represents the recipients produced by f
         return right.recipients();
     }

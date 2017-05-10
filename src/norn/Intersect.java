@@ -38,7 +38,7 @@ public class Intersect implements ListExpression {
     }
 
     @Override
-    public Set<Recipient> recipients() {
+    public Set<Recipient> recipients(Map<String, Definition> environment) {
         Set<Recipient> intersection = new HashSet<>();
         Set<Recipient> rightRecipients = right.recipients();
         for (Recipient l : left.recipients()) {

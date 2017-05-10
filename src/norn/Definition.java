@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public class Definition implements ListExpression {
     private final ListExpression value;
-    private final String name;
+    private final Name name;
     
     // Abstraction function: AF(value, name) = the set of recipients defined by value, named name
     // Rep invariant: true
@@ -22,7 +22,7 @@ public class Definition implements ListExpression {
      * @param value the ListExpression used in this Definition
      * @param name the name of this list
      */
-    public Definition(String name, ListExpression value) {
+    public Definition(Name name, ListExpression value) {
         this.value = value;
         this.name = name;
         checkRep();
@@ -44,7 +44,7 @@ public class Definition implements ListExpression {
     }
     
     @Override
-    public Set<Recipient> recipients() {
+    public Set<Recipient> recipients(Map<String, Definition> environment) {
         return new HashSet<Recipient>(value.recipients());
     }
     
