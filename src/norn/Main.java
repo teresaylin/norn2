@@ -1,13 +1,10 @@
 package norn;
 
+import java.io.File;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
-
 import lib6005.parser.UnableToParseException;
 
 /**
@@ -41,11 +38,21 @@ import lib6005.parser.UnableToParseException;
  *
  * The output of this console is an order-independent view of the emails specified in an email
  * list expression.
+ * 
+ * Lastly, the user can use the commands !save or !load to save currently defined named lists
+ * to a file or load a saved file. Saved files contain a single valid list expression (a sequence
+ * of list definitions). A user can specify multiple files in the same !load command but must
+ * separate the files by a comma.
+ * 
+ * If a filename does not contain a valid list expression (during loading), or the file is 
+ * unreadable (during saving), then 
  *
  * If given no input, this console proceeds to wait until valid input is given.
  */
 public class Main {
     public static final String EMPTY_LIST = "{}";
+    private static final String LOAD_COMMAND = "!load";
+    private static final String SAVE_COMMAND = "!save";
 
     /**
      * Reads expressions as command inputs from the console and outputs results
@@ -67,12 +74,40 @@ public class Main {
                 continue; // Gives nothing back to user and waits for further input.
             }
             try{
-                ListExpression parsed = ListExpression.parse(input);
-                Set<Recipient> printout = parsed.recipients();
-                System.out.println(printout.toString().replaceAll("[\\[\\]]", ""));
+                // handle !load for one or more comma-separated file names
+                if (input.startsWith(LOAD_COMMAND)) {
+                    
+                } else if (input.startsWith(SAVE_COMMAND)) {
+                    // handle !save
+                    
+                } else {
+                    ListExpression parsed = ListExpression.parse(input);
+                    Set<Recipient> printout = parsed.recipients();
+                    System.out.println(printout.toString().replaceAll("[\\[\\]]", ""));
+                }
             } catch(IllegalArgumentException e){
                 System.out.println("expression unable to be parsed");
             }
         }
+    }
+    
+    /**
+     * Reads in a file and parses the file, if the file contains a valid list expression.
+     * 
+     * @param file The name of the file to be loaded
+     * @return true if file was successfully read, false otherwise
+     */
+    private static boolean load(File file) {
+        return true; // placeholder
+    }
+    
+    /**
+     * Saves a single valid list expression to a file.
+     * @param fileName The name of the file to be saved
+     * @param expression
+     * @return true if expression was successfully saved to fileName
+     */
+    private static boolean save(String fileName, ListExpression expression) {
+        return true; // placeholder
     }
 }
