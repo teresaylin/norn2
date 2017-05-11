@@ -38,10 +38,10 @@ public class Intersect implements ListExpression {
     }
 
     @Override
-    public Set<Recipient> recipients(Map<String, Definition> environment) {
+    public Set<Recipient> recipients(Map<Name, ListExpression> environment) {
         Set<Recipient> intersection = new HashSet<>();
-        Set<Recipient> rightRecipients = right.recipients();
-        for (Recipient l : left.recipients()) {
+        Set<Recipient> rightRecipients = right.recipients(environment);
+        for (Recipient l : left.recipients(environment)) {
             if (rightRecipients.contains(l)) {
                 intersection.add(l);
             }

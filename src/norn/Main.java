@@ -149,9 +149,9 @@ public class Main {
                     // handle !save
                     
                 } else {
-                    ListExpression parsed = ListExpression.parse(input);
-                    Set<Recipient> printout = parsed.recipients();
-                    System.out.println(printout.toString().replaceAll("[\\[\\]]", ""));
+                    Set<Recipient> parsed = ListExpression.parse(input); // TODO: change parse() to call recipients(env) 
+                                                                         // and return the set to the frontend
+                    System.out.println(parsed.toString().replaceAll("[\\[\\]]", ""));
                 }
             } catch(IllegalArgumentException e){
                 System.out.println("expression unable to be parsed");

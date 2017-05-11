@@ -1,6 +1,5 @@
 package norn;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -8,11 +7,10 @@ import java.util.Set;
 /**
  * Immutable representation of a named set of email addresses.
  */
-public class Definition implements ListExpression {
-    private final ListExpression value;
+public class Name implements ListExpression {
     private final String name;
     
-    // Abstraction function: AF(value, name) = the set of recipients defined by value, named name
+    // Abstraction function: AF(name) = the listname defined by name
     // Rep invariant: true
     // Rep safety: All fields are private, final, and immutable.
     // All references to any returned mutable objects are discarded.
@@ -22,30 +20,23 @@ public class Definition implements ListExpression {
      * @param value the ListExpression used in this Definition
      * @param name the name of this list
      */
-    public Definition(String name, ListExpression value) {
-        this.value = value;
+    public Name(String name) {
         this.name = name;
         checkRep();
     }
     
-    /**
-     * @return ListExpression assigned in this definition
-     */
-    public ListExpression getValue(){
-        return this.value;
-    }
     
     /**
      * Check that the rep invariant is maintained.
      */
     private void checkRep() {
-        assert value != null;
         assert name != null;
     }
     
     @Override
     public Set<Recipient> recipients(Map<Name, ListExpression> environment) {
-        return new HashSet<Recipient>(value.recipients(environment));
+        return new HashSet<>();
+        // TODO: lookup name in environment
     }
     
     /**
@@ -54,19 +45,19 @@ public class Definition implements ListExpression {
      */
     @Override
     public String toString() {
-        return name + " = " + value.toString();
+        return "";
     }
     
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Definition)) return false;
-        Definition that = (Definition) obj;
-        return name.equals(that.name) && value.equals(that.value);
+        if (!(obj instanceof Name)) return false;
+        Name that = (Name) obj;
+        return name.equals(that.name);
     }
     
     @Override
     public int hashCode() {
-        return name.hashCode() + value.hashCode();
+        return name.hashCode();
     }
 
 }
