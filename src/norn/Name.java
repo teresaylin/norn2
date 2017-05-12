@@ -1,33 +1,10 @@
 package norn;
 
-<<<<<<< HEAD
-=======
 import java.util.HashSet;
->>>>>>> 4f04f769f79cd8516157f564a55ab37b8ceca380
 import java.util.Map;
 import java.util.Set;
 
 /**
-<<<<<<< HEAD
- * Immutable representation of the name of an email list definition.
- */
-public class Name implements ListExpression {
-
-    public Name() {
-        
-    }
-    
-    @Override
-    public Set<Recipient> recipients(Map<String, Definition> environment) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
-=======
  * Immutable representation of a named set of email addresses.
  */
 public class Name implements ListExpression {
@@ -39,7 +16,7 @@ public class Name implements ListExpression {
     // All references to any returned mutable objects are discarded.
     
     /**
-     * Create a new Definition.
+     * Create a new Name.
      * @param value the ListExpression used in this Definition
      * @param name the name of this list
      */
@@ -64,36 +41,22 @@ public class Name implements ListExpression {
     
     /**
      * Returned String has the format: 
-     *      name = value.toString()
+     *      name 
      */
     @Override
     public String toString() {
-        return "";
->>>>>>> 4f04f769f79cd8516157f564a55ab37b8ceca380
+        return name;
     }
     
     @Override
     public boolean equals(Object obj) {
-<<<<<<< HEAD
-        // TODO Auto-generated method stub
-        return super.equals(obj);
-=======
         if (!(obj instanceof Name)) return false;
         Name that = (Name) obj;
         return name.equals(that.name);
->>>>>>> 4f04f769f79cd8516157f564a55ab37b8ceca380
     }
     
     @Override
     public int hashCode() {
-<<<<<<< HEAD
-        // TODO Auto-generated method stub
-        return super.hashCode();
-    }
-    
-=======
         return name.hashCode();
     }
-
->>>>>>> 4f04f769f79cd8516157f564a55ab37b8ceca380
 }
