@@ -45,8 +45,9 @@ public class EvalHandler implements HttpHandler {
       * @param exchange to connect server with requests and responses
       */
      public void handle(HttpExchange exchange) throws IOException {
-         // call parseInput and createResponse
+         // process this request
          createResponse(exchange);
+         // Remember to close input and output streams
      }
 
      /**

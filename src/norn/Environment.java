@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A mutable, threadsafe representation of currently defined list names in a 
+ * session of creating email lists.
+ */
 public class Environment {
     private final Map<Name, ListExpression> definitions;
     
