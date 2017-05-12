@@ -40,7 +40,7 @@ public interface ListExpression {
      * @param environment the list definitions used to evaluate this ListExpression
      * @return the Set of unique recipients represented
      */
-    public Set<Recipient> recipients(Map<Name, ListExpression> environment);
+    public Set<Recipient> recipients(Environment environment);
     
     /**
      * @return a parsable representation of this listexpression, such that

@@ -16,7 +16,6 @@ public class ListExpressionParser {
         ROOT, SEQUENCE, DEFINITION, UNION, DIFFERENCE, INTERSECTION, PRIMARY, ADDRESS, WHITESPACE, LISTNAME
     };
 
-    private static final Map<String, Definition> environment = new HashMap<String, Definition>();
     private static Parser<ListExpressionGrammar> parser = makeParser();
     
     /**
@@ -84,6 +83,7 @@ public class ListExpressionParser {
         }
         case DEFINITION: // definition ::= (listname '=')? union;
             {
+                // TODO change how a definition is parsed
                 final int ASSIGNMENT_NUMBER = 2;
                 boolean isAssignment = parseTree.children().size() == ASSIGNMENT_NUMBER;
                 if (isAssignment) {
@@ -136,6 +136,7 @@ public class ListExpressionParser {
             }
         case LISTNAME: // listname ::= [A-Za-z0-9_\-\.]+;
         {
+            // TODO change to not evaluate list name
             String listNameText = parseTree.text();
             for (String i: environment.keySet()) {
                 if (i.equals(listNameText)) {

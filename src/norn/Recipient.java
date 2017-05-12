@@ -40,10 +40,11 @@ public class Recipient implements ListExpression {
     }
     
     @Override
-    public Set<Recipient> recipients(Map<Name, ListExpression> environment) {
-        Set<Recipient> recipients = new HashSet<>();
-        recipients.add(this); // TODO modify to use environment
-        return recipients;
+    public Set<Recipient> recipients(Environment environment) {
+        throw new UnsupportedOperationException("Implement me!");
+//        Set<Recipient> recipients = new HashSet<>();
+//        recipients.add(this); // TODO modify to use environment
+//        return recipients;
     }
    
     /**

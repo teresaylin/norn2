@@ -11,7 +11,7 @@ public class Name implements ListExpression {
     private final String name;
     
     // Abstraction function: AF(name) = the listname defined by name
-    // Rep invariant: true
+    // Rep invariant: all characters in name are letters, digits, underscores, dashes, or periods.
     // Rep safety: All fields are private, final, and immutable.
     // All references to any returned mutable objects are discarded.
     
@@ -31,12 +31,13 @@ public class Name implements ListExpression {
      */
     private void checkRep() {
         assert name != null;
+        // TODO check the rest of the rep invariant.
     }
     
     @Override
-    public Set<Recipient> recipients(Map<Name, ListExpression> environment) {
-        return new HashSet<>();
-        // TODO: lookup name in environment
+    public Set<Recipient> recipients(Environment environment) {
+        ListExpression expr = environment.getExpression(this);
+        return expr.recipients(environment);
     }
     
     /**

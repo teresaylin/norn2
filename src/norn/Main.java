@@ -136,6 +136,7 @@ public class Main {
         while (true) {
             System.out.print("> ");
             final String input = in.readLine();
+            // TODO create a common environment
             
             if (input.isEmpty()) {
                 System.out.println(EMPTY_LIST);
@@ -149,8 +150,7 @@ public class Main {
                     // handle !save
                     
                 } else {
-                    Set<Recipient> parsed = ListExpression.parse(input); // TODO: change parse() to call recipients(env) 
-                                                                         // and return the set to the frontend
+                    Set<Recipient> parsed = ListExpression.parse(input); // TODO: call recipients
                     System.out.println(parsed.toString().replaceAll("[\\[\\]]", ""));
                 }
             } catch(IllegalArgumentException e){
