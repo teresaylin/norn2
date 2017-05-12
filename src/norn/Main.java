@@ -158,25 +158,5 @@ public class Main {
             }
         }
     }
-    
-    /**
-     * Reads in a file and parses the file, if the file contains a valid list expression.
-     * 
-     * @param file The name of the file to be loaded. Cannot contain newlines. 
-     * The contents of the file should be a single valid list expression. 
-     * @return true if file was successfully read, false otherwise
-     */
-    private static boolean load(File file) {
-        return true; // placeholder
-    }
-    
-    /**
-     * Saves all currently-defined named lists to a file.
-     * @param fileName The name of the file to be written
-     * @param expression 
-     * @return true if expression was successfully saved to fileName
-     */
-    private static boolean save(String fileName, ListExpression expression) {
-        return true; // placeholder
-    }
+   
 }
