@@ -12,7 +12,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 /**
- * Multi-client ListExpression evaluating web interface.
+ * Multi-client ListExpression-evaluating web interface.
  */
 public class WebServer implements HttpHandler {
 
