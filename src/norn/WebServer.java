@@ -2,12 +2,13 @@ package norn;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 /**
- * TODO
+ * Server to handle web client requests to ListExpression system.
  */
 public class WebServer {
     public static final int PORT = 5021;
@@ -15,7 +16,7 @@ public class WebServer {
     private final Environment environment;
     
     /**
-     * TODO
+     * Creates an HTTP server to connect with web clients.
      * @throws IOException
      */
     public WebServer() throws IOException {
@@ -25,38 +26,44 @@ public class WebServer {
     }
     
     /**
-     * TODO
+     * @return current server environment of list names
+     */
+    public Environment getEnvironment(){
+        return new Environment();
+    }
+    
+    /**
+     * Starts the WebServer for client connection.
      */
     public void start() {
         server.start();
     }
     
     /**
-     * TODO
+     * Closes WebServer service.
      */
     public void stop() {
         server.stop(0);
-    }
+    }   
     
     /**
-     * TODO
-     * @return
+     * @return port number at which server listens for connections
      */
     public int port() {
         return PORT;
     }
 
     /**
-     * TODO
-     * @param prefix
-     * @param handler
+     * Creates context mapping URIs to handlers.
+     * @param prefix of path
+     * @param handler of path HTTP information
      */
     public void addContext(String prefix, HttpHandler handler) {
         server.createContext(prefix, handler);
     }
     
     /**
-     * TODO
+     * Creates and manages server.
      * @param args
      */
     public static void main(String[] args) {
