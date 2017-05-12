@@ -17,7 +17,7 @@ public class Empty implements ListExpression {
     //  There are no fields.
     
     @Override
-    public Set<Recipient> recipients(Map<String, Definition> environment) {
+    public Set<Recipient> recipients(Map<Name, ListExpression> environment) {
         return Collections.emptySet();
     }
 

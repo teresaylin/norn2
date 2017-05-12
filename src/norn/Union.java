@@ -41,9 +41,9 @@ public class Union implements ListExpression {
     }
     
     @Override
-    public Set<Recipient> recipients(Map<String, Definition> environment) {
-        Set<Recipient> allRecipients = new HashSet<>(left.recipients());
-        allRecipients.addAll(right.recipients());
+    public Set<Recipient> recipients(Map<Name, ListExpression> environment) {
+        Set<Recipient> allRecipients = new HashSet<>(left.recipients(environment));
+        allRecipients.addAll(right.recipients(environment));
         return allRecipients;
     }
     

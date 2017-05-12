@@ -48,13 +48,14 @@ public class ExpressionParserTest {
 
     // T E S T I N G  p a r s e ( )
 
+    public final static Map<Name, ListExpression> EMPTY_ENVIRONMENT = new HashMap<>();
     private static final Set<String> emptySet = Collections.emptySet();
     
     // empty input, as defined by spec of Main.java
     @Test
     public void testParserEmptyInput() {
         final ListExpression e = ListExpression.parse("");
-        assertEquals(true, e.recipients().equals(Collections.emptySet()));
+        assertEquals(true, e.recipients(EMPTY_ENVIRONMENT).equals(Collections.emptySet()));
     }
 
     // uppercase, 1 email, email input
@@ -76,7 +77,7 @@ public class ExpressionParserTest {
     public void testParserTwoEmailsSame() {
         final ListExpression e = ListExpression.parse("BEN@mit.edu, ben@mit.edu");
         assertTrue("Expected ben@mit.edu, ben@mit.edu", e.toString().contains("ben@mit.edu, ben@mit.edu"));
-        assertEquals("Expected one recipient in union", 1, e.recipients().size());
+        assertEquals("Expected one recipient in union", 1, e.recipients(EMPTY_ENVIRONMENT).size());
     }
 
     // lowercase, 2 emails same, union of emails
@@ -107,29 +108,29 @@ public class ExpressionParserTest {
     @Test
     public void testParserDifferenceEmptyOutput() {
         final ListExpression e = ListExpression.parse("a@mit ! a@mit");
-        assertEquals(true, e.recipients().equals(emptySet));
+        assertEquals(true, e.recipients(EMPTY_ENVIRONMENT).equals(emptySet));
     }
 
     // 2 emails, difference is set of one email
     @Test
     public void testParserDifferenceOutputHasOneEmail() {
         final ListExpression e = ListExpression.parse("(a@mit,b@c) ! a@mit");
-        assertEquals("Expected 1 recipient", 1, e.recipients().size());
-        assertTrue("Expected b@c to be recipient", e.recipients().toString().contains("b@c"));
+        assertEquals("Expected 1 recipient", 1, e.recipients(EMPTY_ENVIRONMENT).size());
+        assertTrue("Expected b@c to be recipient", e.recipients(EMPTY_ENVIRONMENT).toString().contains("b@c"));
     }
 
     // empty set, difference
     @Test
     public void testParserDifferenceEmptyBase() {
         final ListExpression e = ListExpression.parse(" ! a@mit");
-        assertEquals(true, e.recipients().equals(emptySet));
+        assertEquals(true, e.recipients(EMPTY_ENVIRONMENT).equals(emptySet));
     }
 
     // difference, set - the empty set
     @Test
     public void testParserDifferenceSubtractEmptyFromBase() {
         final ListExpression e = ListExpression.parse("a@mit !");
-        assertTrue(e.recipients().size() == 1);
+        assertTrue(e.recipients(EMPTY_ENVIRONMENT).size() == 1);
         assertTrue(e.toString().contains("a@mit"));
     }
 
@@ -137,33 +138,33 @@ public class ExpressionParserTest {
     @Test
     public void testParserIntersectionEmptyOutput() {
         final ListExpression e = ListExpression.parse("a@mit * b@mit");
-        assertEquals(true, e.recipients().equals(emptySet));
+        assertEquals(true, e.recipients(EMPTY_ENVIRONMENT).equals(emptySet));
     }
 
     // > 2 emails, intersection
     @Test
     public void testParserIntersectionMultipleEmails() {
         final ListExpression e = ListExpression.parse("(a@b,b@c,c@d) * (b@c,c@d)");
-        assertEquals("Expected 2 recipients", 2, e.recipients().size());
-        assertTrue("Expected b@c and c@d to be recipients", e.recipients().toString().contains("c@d") 
-                && e.recipients().toString().contains("b@c"));
+        assertEquals("Expected 2 recipients", 2, e.recipients(EMPTY_ENVIRONMENT).size());
+        assertTrue("Expected b@c and c@d to be recipients", e.recipients(EMPTY_ENVIRONMENT).toString().contains("c@d") 
+                && e.recipients(EMPTY_ENVIRONMENT).toString().contains("b@c"));
     }
 
     // > 2 emails, intersection of a list ListExpression with itself
     @Test
     public void testParserIntersectionItself() {
         final ListExpression e = ListExpression.parse("(a@b,b@c,c@d) * (a@b,b@c,c@d)");
-        assertEquals("Expected 3 recipients", 3, e.recipients().size());
-        assertTrue("Expected a@b, b@c, and c@d to be recipients", e.recipients().toString().contains("c@d") 
-                && e.recipients().toString().contains("b@c")
-                && e.recipients().toString().contains("a@b"));
+        assertEquals("Expected 3 recipients", 3, e.recipients(EMPTY_ENVIRONMENT).size());
+        assertTrue("Expected a@b, b@c, and c@d to be recipients", e.recipients(EMPTY_ENVIRONMENT).toString().contains("c@d") 
+                && e.recipients(EMPTY_ENVIRONMENT).toString().contains("b@c")
+                && e.recipients(EMPTY_ENVIRONMENT).toString().contains("a@b"));
     }
 
     // empty set, intersection
     @Test
     public void testParserIntersectionEmptyBase() {
         final ListExpression e = ListExpression.parse("* ");
-        assertEquals(true,e.recipients().equals(emptySet));
+        assertEquals(true,e.recipients(EMPTY_ENVIRONMENT).equals(emptySet));
     }
 
 

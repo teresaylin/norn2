@@ -36,9 +36,9 @@ public class Sequence implements ListExpression {
     }
 
     @Override
-    public Set<Recipient> recipients(Map<String, Definition> environment) {
+    public Set<Recipient> recipients(Map<Name, ListExpression> environment) {
         // e ; f represents the recipients produced by f
-        return right.recipients();
+        return right.recipients(environment);
     }
     
     /*
