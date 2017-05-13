@@ -11,7 +11,7 @@ import java.util.Set;
 import org.junit.Test;
 
 /**
- * Tests for the Expression abstract data type
+ * Tests for the ListExpression abstract data type
  */
 public class ExpressionTest {
     /*
@@ -21,12 +21,13 @@ public class ExpressionTest {
      *      Union   
      *      Intersect
      *      Difference
+     *      Definition
      *      Name
      *      Sequence
      *      Empty
      *      Recipient
      *
-     *  recipients(environment):
+     *  recipients(environment)/environment constructor/environment.reassign():
      *      each concrete variant class
      *      number of recipients: 0, 1, >1
      *      duplicate recipients
@@ -35,14 +36,17 @@ public class ExpressionTest {
      *
      *      number of Names in environment keyset: 0, 1, >1
      *      nesting in environment
+     *      reassign: new key/replace key
      *      
      *      number of Names to evaluate: 0, 1, >1
      *      nesting in list expression
-     *      fully evaluates/some list name lookup fails
+     *      fully evaluates/list name lookup fails
      *      
-     *      invalid inputs/special cases: // TODO
-     *          definition within another definition (temporary environment?)
-     *          sequence within each variant class (evaluate last statement with temporary environment?)
+     *      add new definition
+     *      reassign list name with/without recursion
+     *      
+     *      definition within another definition
+     *      sequence within another variant
      *      
      *  toString():
      *      case - lower, upper
@@ -58,7 +62,26 @@ public class ExpressionTest {
      *  
      */
     
-    public final static Map<Name, ListExpression> EMPTY_ENVIRONMENT = new HashMap<>();
+    // Recipients
+    private final static Recipient AB = new Recipient("a@b");
+    private final static Recipient CD = new Recipient("c@d");
+    private final static Recipient SPECIAL = new Recipient("-_@b");
+    
+    // Environments (mutable)
+    private final static Environment EMPTY_ENVIRONMENT = new Environment();
+    
+    // ListExpressions (immutable)
+    private final static Intersect ONE_EVAL = 
+            new Intersect(new Union(AB, SPECIAL), new Name("a")); // (AB, SPECIAL) * a
+    private final static Difference TWO_EVAL = 
+            new Difference(new Union(new Union(AB, SPECIAL), new Name("a")), new Name("b")); // ((AB, SPECIAL), a) ! b
+    private final static Sequence SEQ_EVAL = 
+            new Sequence(new Definition(new Name("c"), new Union(AB, CD)), new Name("c")); // c = AB, CD; c
+    private final static Definition ASSIGN_EVAL = 
+            new Definition(new Name("a"), new Definition(new Name("b"), SPECIAL)); // a = (b = SPECIAL)
+    private final static Union SEQ_WITHIN = 
+            new Union(new Sequence(AB, CD), SPECIAL); // (AB; CD), SPECIAL
+    
 
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
@@ -66,7 +89,95 @@ public class ExpressionTest {
     }
     
     // Testing recipients...
+
     
+    // Looking up Names...
+    
+    // Intersect/Union/Name
+    // reassign(): new definition, replace definition
+    // 1 Name lookup
+    // 1 Name in environment
+    // No recursion in environment
+    // Recursion in expression
+    @Test   
+    public void testRecipientReassignOneLookUp() { 
+        final Environment oneEnvironment = new Environment();
+        assertEquals("Expected previous assignment", new Empty(),
+                oneEnvironment.reassign(new Name("a"), new Union(AB, CD))); 
+        assertEquals("Expected previous assignment", new Union(AB, CD),
+                oneEnvironment.reassign(new Name("a"), new Intersect(new Union(AB, CD), AB))); 
+        Set<ListExpression> aSet = new HashSet<>();
+        aSet.add(new Recipient("a@b"));
+        assertEquals("Expected correct recipients", aSet, ONE_EVAL.recipients(oneEnvironment));
+    }
+    
+    // Difference/Union
+    // 2 Name lookup
+    // 2 Names in environment
+    // Recursion in environment
+    // Recursion in expression
+    @Test  
+    public void testRecipientTwoLookUp() { 
+        final Environment twoEnvironment = new Environment();
+        twoEnvironment.reassign(new Name("a"), new Union(AB, CD)); // a: a@b, c@d
+        twoEnvironment.reassign(new Name("b"), new Difference(new Name("a"), CD)); // b: a ! c@d
+        Set<ListExpression> aSet = new HashSet<>();
+        aSet.add(new Recipient("a@b"));
+        aSet.add(new Recipient("-_@b"));
+        assertEquals("Expected correct recipients", aSet, TWO_EVAL.recipients(twoEnvironment));
+    }
+    
+    // 1 Name lookup
+    // no Names in environment
+    // undefined Name
+    @Test   
+    public void testRecipientMissingDefinition() { 
+        Set<ListExpression> aSet = new HashSet<>();
+        assertEquals("Expected correct recipients", aSet, ONE_EVAL.recipients(EMPTY_ENVIRONMENT));
+    }
+    
+    // Sequence; Definition in Sequence
+    // add new definition during evaluation
+    @Test   
+    public void testRecipientAddNewDefinition() { 
+        Set<ListExpression> aSet = new HashSet<>();
+        aSet.add(new Recipient("a@b"));
+        aSet.add(new Recipient("c@d"));
+        assertEquals("Expected correct recipients", aSet, SEQ_EVAL.recipients(EMPTY_ENVIRONMENT));
+    }
+    
+    // replace definition during evaluation
+    // nested definition update
+    @Test   
+    public void testRecipientReplaceDefinition() { 
+        final Environment twoEnvironment = new Environment();
+        twoEnvironment.reassign(new Name("a"), new Union(AB, CD)); // a: a@b, c@d
+        twoEnvironment.reassign(new Name("b"), new Difference(new Name("a"), CD)); // b: a ! c@d
+        twoEnvironment.reassign(new Name("a"), new Union(SPECIAL, CD)); // a: a@b, c@d
+        Set<ListExpression> aSet = new HashSet<>();
+        aSet.add(new Recipient("-_@b"));
+        assertEquals("Expected correct recipients", aSet, new Recipient("b").recipients(twoEnvironment));
+    }
+
+    // No Names to look up... 
+    
+    // Definition within another Definition
+    @Test   
+    public void testRecipientNestedDefinition() { 
+        Set<ListExpression> aSet = new HashSet<>();
+        aSet.add(new Recipient("-_@b"));
+        assertEquals("Expected correct recipients", aSet, ASSIGN_EVAL.recipients(EMPTY_ENVIRONMENT));
+    }
+    
+    // Sequence within Union
+    @Test   
+    public void testRecipientSequenceInUnion() { 
+        Set<ListExpression> aSet = new HashSet<>();
+        aSet.add(new Recipient("c@d"));
+        aSet.add(new Recipient("-_@b"));
+        assertEquals("Expected correct recipients", aSet, SEQ_WITHIN.recipients(EMPTY_ENVIRONMENT));
+    }
+
     // 0 recipients
     @Test 
     public void testRecipientEmptyList() {
@@ -191,6 +302,9 @@ public class ExpressionTest {
         assertTrue("Expected empty set", parsed.recipients(EMPTY_ENVIRONMENT).equals(aSet));
     }
     
+    
+    
+    
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     // toString()
     // Empty
@@ -258,6 +372,22 @@ public class ExpressionTest {
         final ListExpression e1 = ListExpression.parse("B@mit.edu");
         final ListExpression e2 = ListExpression.parse("b@mit.edu");
         assertEquals("B@mit.edu equals b@mit.edu", e1, e2);
+    }
+    
+    // Sequence
+    @Test
+    public void testEqualsTwoSequences() {
+        final ListExpression e1 = ListExpression.parse("B@mit.edu; a@mit.edu");
+        final ListExpression e2 = ListExpression.parse("b@mit.edu; A@mit.edu");
+        assertEquals("sequences should be equal", e1, e2);
+    }
+    
+    // Name
+    @Test
+    public void testEqualsTwoNames() {
+        final ListExpression e1 = ListExpression.parse("B");
+        final ListExpression e2 = ListExpression.parse("b");
+        assertEquals("names should be equal", e1, e2);
     }
 
     // Union
