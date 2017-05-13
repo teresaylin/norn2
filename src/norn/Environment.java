@@ -68,4 +68,17 @@ public class Environment {
         // TODO implement
         throw new UnsupportedOperationException("Implement me!");
     }
+    
+    /**
+     * Reassign the specified name to the specified expression and return
+     * the expression previously linked to the name. If there was no 
+     * definition for this name previously, returns an empty list.
+     * @param name the name to define
+     * @param expression the expression to link to name
+     * @return the previous expression linked to this name (empty if none).
+     */
+    public ListExpression reassign(Name name, ListExpression expression) {
+        // TODO implement
+        throw new UnsupportedOperationException("Implement me!");
+    }
 }
