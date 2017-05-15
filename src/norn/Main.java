@@ -1,7 +1,11 @@
 package norn;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Set;
@@ -174,4 +178,48 @@ public class Main {
         }
     }
    
+    /**
+     * Saves all definitions in this Environment to a file.
+     * @param filename The name of the file to be written
+     * @param expression 
+     * @return true if definitions were successfully saved to fileName
+     */
+    public boolean save(String filename, Environment env) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            Set<Name> names = env.getNames();
+            for (Name n : names) {
+                writer.write(n.toString() + " = (" + env.getExpression(n).toString() + ")"); // TODO should this be recipients?
+                writer.write("; ");
+            }
+            writer.flush();
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            System.out.println("Could not open file to writer: " + e.getMessage());
+        }
+        return false;
+    }
+    
+    /**
+     * Attempts to read and parse a file containing a valid list expression.
+     * Adds all definitions in the file to this Environment.
+     * @param file the file to be loaded. Cannot contain newlines. 
+     *  The contents of the file should be a single valid list expression. 
+     * @return true if the contents of the file were successfully loaded,
+     *  false otherwise.
+     * @throws FileNotFoundException if file not found
+     */
+    public boolean load(File file, Environment env) throws FileNotFoundException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        try {
+            String toParse = reader.readLine();
+            ListExpression parsed = ListExpression.parse(toParse);
+            parsed.recipients(env);
+            return true;
+        } catch (IOException e) {
+            System.out.println("Invalid input, could not parse: " + e.getMessage());
+        }
+        return false;
+    }
 }

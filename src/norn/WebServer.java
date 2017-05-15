@@ -25,6 +25,8 @@ public class WebServer {
     private static final String RECIPIENT_LIST_DELIMITER = ", ";
     private static final String LINE_BREAK = "<br>";
     
+    // TODO write AF, RI, Rep exposure
+    
     /**
      * Creates an HTTP server to connect with web clients.
      * @throws IOException

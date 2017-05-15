@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A mutable, threadsafe representation of currently defined list names in a 
@@ -62,48 +63,11 @@ public class Environment {
     }
     
     /**
-     * Saves all definitions in this Environment to a file.
-     * @param filename The name of the file to be written
-     * @param expression 
-     * @return true if definitions were successfully saved to fileName
+     * Get the names of all definitions in this environment
+     * @return a set containing all names in this environment
      */
-    public boolean save(String filename) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            for (Name n : definitions.keySet()) {
-                writer.write(n.toString() + " = (" + definitions.get(n).toString() + ")"); // TODO should this be recipients?
-                writer.write("; ");
-            }
-            writer.flush();
-            writer.close();
-            return true;
-        } catch (IOException e) {
-            System.out.println("Could not open file to writer: " + e.getMessage());
-        }
-        return false;
-    }
-    
-    /**
-     * Attempts to read and parse a file containing a valid list expression.
-     * Adds all definitions in the file to this Environment.
-     * @param file the file to be loaded. Cannot contain newlines. 
-     *  The contents of the file should be a single valid list expression. 
-     * @return true if the contents of the file were successfully loaded,
-     *  false otherwise.
-     * @throws FileNotFoundException if file not found
-     */
-    public boolean load(File file) throws FileNotFoundException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        try {
-            String toParse = reader.readLine();
-            ListExpression parsed = ListExpression.parse(toParse);
-            parsed.recipients(this);
-            checkRep();
-            return true;
-        } catch (IOException e) {
-            System.out.println("Invalid input, could not parse: " + e.getMessage());
-        }
-        return false;
+    public Set<Name> getNames() {
+        // TODO implement
     }
     
     /**
