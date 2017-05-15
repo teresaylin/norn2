@@ -14,7 +14,7 @@ import java.net.URL;
 import org.junit.Test;
 
 /*
- * Tests the web server with multiple web users and console users.
+ * Tests the web server for different evaluation inputs from web clients.
  */
 public class WebServerTest {
     /*
