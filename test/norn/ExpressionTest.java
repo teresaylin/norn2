@@ -46,6 +46,7 @@ public class ExpressionTest {
      *      reassign list name with/without recursion
      *      
      *      definition within another definition
+     *      listname defined with itself
      *      sequence within another variant
      *      
      *  toString():
@@ -150,13 +151,36 @@ public class ExpressionTest {
     // nested definition update
     @Test   
     public void testRecipientReplaceDefinition() { 
+        final ListExpression testExpr = new Recipient("b");
+        
         final Environment twoEnvironment = new Environment();
         twoEnvironment.reassign(new Name("a"), new Union(AB, CD)); // a: a@b, c@d
         twoEnvironment.reassign(new Name("b"), new Difference(new Name("a"), CD)); // b: a ! c@d
-        twoEnvironment.reassign(new Name("a"), new Union(SPECIAL, CD)); // a: a@b, c@d
         Set<ListExpression> aSet = new HashSet<>();
-        aSet.add(new Recipient("-_@b"));
-        assertEquals("Expected correct recipients", aSet, new Recipient("b").recipients(twoEnvironment));
+        aSet.add(new Recipient("a@b"));
+        aSet.add(new Recipient("c@d"));
+        assertEquals("Expected correct recipients before reassignment", aSet, testExpr.recipients(twoEnvironment));
+        
+        // Reassignment
+        twoEnvironment.reassign(new Name("a"), new Union(SPECIAL, CD)); // a: a@b, c@d
+        Set<ListExpression> bSet = new HashSet<>();
+        bSet.add(new Recipient("-_@b"));
+        assertEquals("Expected correct recipients after reassignment", bSet, testExpr.recipients(twoEnvironment));
+    }
+    
+    // listname defined with itself
+    @Test   
+    public void testRecipientValidCircularDefinition() { 
+        final ListExpression testExpr = new Definition(new Name("a"), new Union(new Name("a"), CD));
+        
+        final Environment oneEnvironment = new Environment();
+        oneEnvironment.reassign(new Name("a"), AB); 
+        
+        Set<ListExpression> aSet = new HashSet<>();
+        aSet.add(new Recipient("a@b"));
+        aSet.add(new Recipient("c@d"));
+        
+        assertEquals("Expected correct recipients", aSet, testExpr.recipients(oneEnvironment));
     }
 
     // No Names to look up... 
@@ -314,11 +338,12 @@ public class ExpressionTest {
         assertEquals("Empty input returns ''", "", e.toString());
     }
     
-    // Definition
+    // Definition with Name
+    // 2 levels
     @Test
     public void testToStringDefinition() {
-        final ListExpression e = ListExpression.parse("a = b@mit.edu");
-        assertEquals("a = b@mit.edu returns a = b@mit.edu", "a = b@mit.edu", e.toString());
+        final ListExpression e = ListExpression.parse("a = b@mit.edu, c");
+        assertEquals("expected correct toString()", "a = b@mit.edu, c", e.toString());
     }
     
     // Recipient, uppercase
@@ -337,6 +362,7 @@ public class ExpressionTest {
     }
     
     // Union of two empty lists
+    // Empty
     @Test
     public void testToStringUnionEmpty() {
         final ListExpression e = ListExpression.parse(",");
@@ -352,10 +378,25 @@ public class ExpressionTest {
     
     // Intersection
     @Test
-    public void testToStringIntersectionEmpty() {
+    public void testToStringIntersection() {
         ListExpression e = ListExpression.parse("(a@b, b@c) * c@d");
         assertEquals("'(a@b, b@c) * c@d' returns ((a@b, b@c) * c@d)", "((a@b, b@c) * c@d)", e.toString());
     }
+    
+    // Name
+    @Test
+    public void testToStringName() {
+        ListExpression e = ListExpression.parse("nAme1_-.");
+        assertEquals("expected correct toString()", "nAme1_-.", e.toString());
+    }
+    
+    // Sequence
+    @Test
+    public void testToStringSequence() {
+        ListExpression e = ListExpression.parse("nAme1_-.; a = 5");
+        assertEquals("expected correct toString()", "nAme1_-.; a = 5", e.toString());
+    }
+    
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     // equals()
     // Definition
@@ -473,11 +514,11 @@ public class ExpressionTest {
         assertEquals("Difference of email lists should have same hashcode", e2.hashCode(), e1.hashCode());
     }
     
-    // Intersection
+    // Intersect, Sequence, Name
     @Test
     public void testHashCodeIntersection() {
-        ListExpression e1 = ListExpression.parse("(a@mit.edu, b@mit.edu) * b@mit.edu");
-        ListExpression e2 = ListExpression.parse("(A@mit.edu, B@mit.edu) * b@mit.edu");
+        ListExpression e1 = ListExpression.parse("(a@mit.edu, b@mit.edu) * b@mit.edu; b");
+        ListExpression e2 = ListExpression.parse("(A@mit.edu, B@mit.edu) * b@mit.edu; B");
         assertEquals("Same hashcode for intersection of email lists", e2.hashCode(), e1.hashCode());
     }
 }
