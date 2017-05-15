@@ -7,9 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Set;
 import lib6005.parser.UnableToParseException;
 
-/**
- * TODO update to reflect Proj 2 specs
- * 
+/** 
  * This is the interactive console for processing and analyzing email list expressions.
  * It supports user-inputted email list expressions, defined by the specification in the
  * Norn2 project handout. 
