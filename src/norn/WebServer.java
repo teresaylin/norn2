@@ -124,27 +124,5 @@ public class WebServer {
     public void addContext(String prefix, HttpHandler handler) {
         server.createContext(prefix, handler);
     }
-    
-    /**
-     * Reads in a file and parses the file, if the file contains a valid list expression.
-     * 
-     * @param file The file to be loaded. Cannot contain newlines. 
-     * The contents of the file should be a single valid list expression. 
-     */
-    public void load(File file) {
-        try {
-            environment.load(file);
-        } catch (FileNotFoundException e) {
-            System.out.println("Error loading file: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Saves all currently-defined named lists to a file.
-     * @param filename The name of the file to be created and written to
-     */
-    public void save(String filename) {
-        environment.save(filename);
-    }
 
 }
