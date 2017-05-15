@@ -1,5 +1,6 @@
 package norn;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,12 +60,12 @@ public class Environment {
     /**
      * Attempts to read and parse a file containing a valid list expression.
      * Adds all definitions in the file to this Environment.
-     * @param file The name of the file to be loaded. Cannot contain newlines. 
+     * @param file the file to be loaded. Cannot contain newlines. 
      *  The contents of the file should be a single valid list expression. 
      * @return true if the contents of the file were successfully loaded,
      *  false otherwise.
      */
-    public boolean load(String filename) {
+    public boolean load(File file) {
         // TODO implement
         throw new UnsupportedOperationException("Implement me!");
     }
