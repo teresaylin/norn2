@@ -36,7 +36,8 @@ public interface ListExpression {
     /**
      * Determines the set of unique recipients represented by the current ListExpression,
      * evaluating all list names completely. List names that are not defined in the current
-     * environment are evaluated as empty lists.
+     * environment are evaluated as empty lists. Modifies environment to contain all 
+     * definitions in this ListExpression.
      * @param environment the list definitions used to evaluate this ListExpression
      * @return the Set of unique recipients represented
      */
