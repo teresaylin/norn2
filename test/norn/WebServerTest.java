@@ -14,7 +14,7 @@ import java.net.URL;
 import org.junit.Test;
 
 /*
- * Tests the web server with multiple web users and console users.
+ * Tests the web server for different evaluation inputs from web clients.
  */
 public class WebServerTest {
     /*
@@ -24,9 +24,6 @@ public class WebServerTest {
      *      invalid GET request
      *          invalid list expression
      *          invalid request in general
-     *  Number of users:
-     *      Web users: 0, 1 (cannot test multiple web users)
-     *      Console users: 0, 1, >1
      *  Evaluates:
      *      Undefined list --> {}
      *      Reassigned list
@@ -264,24 +261,5 @@ public class WebServerTest {
         assertEquals("end of stream", null, reader4.readLine());
 
         server.stop();
-    }
-    
-    
-    // tests 1 console user, 0 web users
-    @Test
-    public void testSingleConsoleUser() throws IOException {
-        
-    }
-    
-    // tests > 1 console user, 0 web users
-    @Test
-    public void testMultipleConsoleUsers() throws IOException {
-        
-    }
-    
-    // tests >1 console users, 1 web users
-    @Test
-    public void testMultipleConsoleAndWebUsers() throws IOException {
-        
     }
 }

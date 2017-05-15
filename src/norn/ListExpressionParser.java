@@ -67,10 +67,10 @@ public class ListExpressionParser {
     private static ListExpression makeAbstractSyntaxTree(final ParseTree<ListExpressionGrammar> parseTree) {
         switch (parseTree.name()) {
         case ROOT: // root ::= sequence;
-            {
-                final ParseTree<ListExpressionGrammar> child = parseTree.children().get(0);
-                return makeAbstractSyntaxTree(child);
-            }
+        {
+            final ParseTree<ListExpressionGrammar> child = parseTree.children().get(0);
+            return makeAbstractSyntaxTree(child);
+        }
             
         case SEQUENCE: // sequence ::= definition (';' definition)*;
         {
@@ -81,38 +81,40 @@ public class ListExpressionParser {
             }
             return expression;
         }
+        
         case DEFINITION: // definition ::= (listname '=')? union;
-            {
-                // TODO change how a definition is parsed
-                final int ASSIGNMENT_NUMBER = 2;
-                boolean isAssignment = parseTree.children().size() == ASSIGNMENT_NUMBER;
-                if (isAssignment) {
-                    Definition assignment = new Definition(parseTree.children().get(0).text(),
-                            makeAbstractSyntaxTree(parseTree.children().get(1)));
-                    environment.put(parseTree.children().get(0).text(), assignment);
-                    return assignment;
-                }
-                return makeAbstractSyntaxTree(parseTree.children().get(parseTree.children().size() - 1));
+        {
+            final int ASSIGNMENT_NUMBER = 2;
+            boolean isAssignment = parseTree.children().size() == ASSIGNMENT_NUMBER;
+            if (isAssignment) {
+                Name name = new Name(parseTree.children().get(0).text());
+                Definition assignment = new Definition(name,
+                        makeAbstractSyntaxTree(parseTree.children().get(1)));
+                return assignment;
             }
+            return makeAbstractSyntaxTree(parseTree.children().get(parseTree.children().size() - 1));
+        }
         
         case UNION: // union ::= difference (',' difference)*;
-            {
-                final List<ParseTree<ListExpressionGrammar>> children = parseTree.children();
-                ListExpression expression = makeAbstractSyntaxTree(children.get(0));
-                for (int i = 1; i < children.size(); ++i) {
-                    expression = new Union(expression, makeAbstractSyntaxTree(children.get(i)));
-                }
-                return expression;
+        {
+            final List<ParseTree<ListExpressionGrammar>> children = parseTree.children();
+            ListExpression expression = makeAbstractSyntaxTree(children.get(0));
+            for (int i = 1; i < children.size(); ++i) {
+                expression = new Union(expression, makeAbstractSyntaxTree(children.get(i)));
             }
+            return expression;
+        }
+        
         case DIFFERENCE: // difference ::= intersection ('!' intersection)*;
-            {
-                final List<ParseTree<ListExpressionGrammar>> children = parseTree.children();
-                ListExpression expression = makeAbstractSyntaxTree(children.get(0));
-                for (int i = 1; i < children.size(); ++i) {
-                    expression = new Difference(expression, makeAbstractSyntaxTree(children.get(i)));
-                }
-                return expression;
+        {
+            final List<ParseTree<ListExpressionGrammar>> children = parseTree.children();
+            ListExpression expression = makeAbstractSyntaxTree(children.get(0));
+            for (int i = 1; i < children.size(); ++i) {
+                expression = new Difference(expression, makeAbstractSyntaxTree(children.get(i)));
             }
+            return expression;
+        }
+        
         case INTERSECTION: // intersection ::= primary ('*' primary)*;
         {
             final List<ParseTree<ListExpressionGrammar>> children = parseTree.children();
@@ -122,28 +124,26 @@ public class ListExpressionParser {
             }
             return expression;
         }
+        
         case PRIMARY: // primary ::= listname | address | '(' union ')';
-            {
-                final ParseTree<ListExpressionGrammar> child = parseTree.children().get(0);
-                return makeAbstractSyntaxTree(child);
-            }
+        {
+            final ParseTree<ListExpressionGrammar> child = parseTree.children().get(0);
+            return makeAbstractSyntaxTree(child);
+        }
+        
         case ADDRESS: // address ::= ([A-Za-z0-9_\-\.]+[@][A-Za-z0-9_\-\.]+)?;
-            {
-                final String address = parseTree.text();
-                if(address.equals(""))
-                    return new Empty();
-                return new Recipient(address);
-            }
+        {
+            final String address = parseTree.text();
+            if(address.equals(""))
+                return new Empty();
+            return new Recipient(address);
+        }
+        
         case LISTNAME: // listname ::= [A-Za-z0-9_\-\.]+;
         {
-            // TODO change to not evaluate list name
-            String listNameText = parseTree.text();
-            for (String i: environment.keySet()) {
-                if (i.equals(listNameText)) {
-                    return environment.get(i).getValue();
-                }
-            }
+            return new Name(parseTree.text());
         }
+        
         default:
             throw new AssertionError("should never get here");
         }
