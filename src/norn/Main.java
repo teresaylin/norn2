@@ -62,27 +62,32 @@ import lib6005.parser.UnableToParseException;
  *      pets = poodle@dog.com, bombay@cat.com, corgi@dog.com --> poodle@dog.com, bombay@cat.com, corgi@dog.com
  *      !load loadtest2 --> \n
  *      petdogs --> corgi@dog.com, poodle@dog.com
- * TODO test loading multiple files
- * TODO test loading files with invalid list expressions --> print human readable error message
+ * test loading multiple files
+ *      !load loadtest1 loadtest3 --> \n
+ *      lunch --> brie@whole.wheat, crouton@tomato.bisque
+ *      dinner --> roast@lamb.mint, german@chocolate.cake
+ * test loading files with invalid list expressions --> print human readable error message
+ *      !load loadtest4 --> [error message]
  *      
  * S A V E
  * test 0 list definitions previously entered
- *      !save savetest1 --> \n
+ *      !save savetests/savetest1 --> \n
  *      [savetest1 should be an empty file]
  * test 1 list definition previously entered
  *      dogs = corgi@dog.com, poodle@dog.com, wolf@dog.com --> corgi@dog.com, poodle@dog.com, wolf@dog.com
- *      !save savetest2 --> \n
+ *      !save savetests/savetest2 --> \n
  *      [savetest2 should contain only one line with text: dogs = corgi@dog.com, poodle@dog.com, wolf@dog.com]
  * test > 1 list definitions previously entered
  *      gryffindor = harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts --> harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
  *      quidditch = harry@hogwarts, ron@hogwarts, draco@hogwarts, cedric@hogwarts --> harry@hogwarts, ron@hogwarts, draco@hogwarts, cedric@hogwarts
  *      sportsfans = gryffindor ! quidditch
- *      !save savetest3
+ *      !save savetests/savetest3
  *      [savetest3 should contain 3 lines:
  *          gryffindor = harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
  *          quidditch = harry@hogwarts, ron@hogwarts, draco@hogwarts, cedric@hogwarts
  *          sportsfans = hermione@hogwarts, neville@hogwarts]
- * TODO save to a file that cannot be opened for writing --> print human readable error message
+ * test saving to a file that cannot be opened for writing --> print human readable error message
+ *      !save loadtests/savetest4 --> [error message; loadtests does not exist]
  *          
  * U N D E F I N E D  L I S T S
  * test undefined name alone
