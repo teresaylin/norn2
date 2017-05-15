@@ -7,9 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Set;
 import lib6005.parser.UnableToParseException;
 
-/**
- * TODO update to reflect Proj 2 specs
- * 
+/** 
  * This is the interactive console for processing and analyzing email list expressions.
  * It supports user-inputted email list expressions, defined by the specification in the
  * Norn2 project handout. 
@@ -64,6 +62,8 @@ import lib6005.parser.UnableToParseException;
  *      pets = poodle@dog.com, bombay@cat.com, corgi@dog.com --> poodle@dog.com, bombay@cat.com, corgi@dog.com
  *      !load loadtest2 --> \n
  *      petdogs --> corgi@dog.com, poodle@dog.com
+ * TODO test loading multiple files
+ * TODO test loading files with invalid list expressions --> print human readable error message
  *      
  * S A V E
  * test 0 list definitions previously entered
@@ -82,6 +82,7 @@ import lib6005.parser.UnableToParseException;
  *          gryffindor = harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
  *          quidditch = harry@hogwarts, ron@hogwarts, draco@hogwarts, cedric@hogwarts
  *          sportsfans = hermione@hogwarts, neville@hogwarts]
+ * TODO save to a file that cannot be opened for writing --> print human readable error message
  *          
  * U N D E F I N E D  L I S T S
  * test undefined name alone
