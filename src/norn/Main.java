@@ -132,25 +132,34 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
         final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        WebServer server = new WebServer();
 
         while (true) {
             System.out.print("> ");
             final String input = in.readLine();
-            // TODO create a common environment
             
             if (input.isEmpty()) {
                 System.out.println(EMPTY_LIST);
                 continue; // Gives nothing back to user and waits for further input.
             }
+            final int prefixLength = "!load".length();
             try{
                 // handle !load for one or more comma-separated file names
                 if (input.startsWith(LOAD_COMMAND)) {
+                    String[] fileNames = input.substring(prefixLength).replaceAll("\\s", "").split(",");
+                    for(String fileName : fileNames){
+                        File loadFile = new File(fileName);
+                        if ( ! loadFile.isFile())
+                            throw new IllegalArgumentException("file not found: \"" + loadFile + "\"");
+                        server.load(loadFile);
+                    }
                     
                 } else if (input.startsWith(SAVE_COMMAND)) {
                     // handle !save
+                    server.save(input.substring(prefixLength).replaceAll("\\s", ""));
                     
                 } else {
-                    Set<Recipient> parsed = ListExpression.parse(input); // TODO: call recipients
+                    Set<Recipient> parsed = ListExpression.parse(input).recipients(server.getEnvironment()); // TODO: call recipients
                     System.out.println(parsed.toString().replaceAll("[\\[\\]]", ""));
                 }
             } catch(IllegalArgumentException e){

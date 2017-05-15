@@ -69,7 +69,7 @@ public class WebServer {
      * @param file The file to be loaded. Cannot contain newlines. 
      * The contents of the file should be a single valid list expression. 
      */
-    public static void load(File file) {
+    public void load(File file) {
         return;
     }
     
@@ -77,7 +77,7 @@ public class WebServer {
      * Saves all currently-defined named lists to a file.
      * @param fileName The name of the file to be created and written to
      */
-    public static void save(String fileName) {
+    public void save(String fileName) {
         return;
     }
     
