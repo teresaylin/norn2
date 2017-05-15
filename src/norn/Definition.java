@@ -19,14 +19,16 @@ public class Definition implements ListExpression {
      * @param expression the ListExpression defining this set of email addresses
      */
     public Definition(Name name, ListExpression expression) {
-        
+        this.name = name;
+        this.expression = expression;
+        checkRep();
     }
     
     /*
      * Checks that rep invariant has been maintained.
      */
     private void checkRep() {
-        
+        //TODO how to check for recursion ?
     }
     
     @Override
@@ -42,20 +44,19 @@ public class Definition implements ListExpression {
      */
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        return name.toString() + " = " + expression.toString();
     }
     
     @Override
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return super.equals(obj);
+        if (!(obj instanceof Definition)) { return false; }
+        Definition that = (Definition) obj;
+        return this.name.equals(that.name) && this.expression.equals(that.name);
     }
     
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
-        return super.hashCode();
+        return name.hashCode();
     }
     
 }
