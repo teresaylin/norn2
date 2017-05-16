@@ -72,15 +72,15 @@ public class WebServer {
                 recipientList = "{}";
             } else {
                 recipientList = "";
+                for (Recipient r : recipients) {
+                    mailToList += r + MAIL_TO_DELIMITER;
+                    recipientList += r + RECIPIENT_LIST_DELIMITER;
+                }
+                // Remove trailing commas
+                mailToList = mailToList.substring(0, mailToList.length() - MAIL_TO_DELIMITER.length());
+                recipientList = recipientList.substring(0, recipientList.length() - RECIPIENT_LIST_DELIMITER.length());
+                
             }
-            for (Recipient r : recipients) {
-                mailToList += r + MAIL_TO_DELIMITER;
-                recipientList += r + RECIPIENT_LIST_DELIMITER;
-            }
-            
-            // Remove trailing commas
-            mailToList = mailToList.substring(0, mailToList.length() - MAIL_TO_DELIMITER.length());
-            recipientList = recipientList.substring(0, recipientList.length() - RECIPIENT_LIST_DELIMITER.length());
             System.out.println(mailToList);
             
             // Create mailto message
