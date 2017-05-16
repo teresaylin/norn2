@@ -19,8 +19,9 @@ public class Environment {
     //                   comprise the lists that have been defined and the values are the corresponding
     //                   list expressions. Any name not in definitions is defined as the empty expression.
     // RI: there are no mail loops (mutually recursive list definitions).
-    // Rep exposure: 
-    // Thread safety: 
+    // Rep exposure: the definitions map is private, final, and never returned through any of the methods.
+    // Thread safety: definitions is a synchronized map, which means that any actions to modify it are atomic.
+    //                Any methods that mutate definitions are therefore threadsafe.
     
     /**
      * Create a new Environment.
@@ -34,8 +35,6 @@ public class Environment {
      * Checks that representation invariant is maintained.
      */
     private void checkRep() {
-        // assert definitions is not null
-        // assert that there are no mail loops
         assert definitions != null;
         for (Name name : definitions.keySet()) {
             // for each name in definitions, run DFS on each child node, keep track of nodes visited
