@@ -1,9 +1,7 @@
 package norn;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -52,8 +50,8 @@ public class Difference implements ListExpression {
     }
     
     @Override
-    public List<ListExpression> getChildren() {
-        return new ArrayList<>(Arrays.asList(left, right));
+    public Set<ListExpression> getChildren() {
+        return new HashSet<>(Arrays.asList(left, right));
     }
 
     /**

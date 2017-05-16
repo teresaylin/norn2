@@ -40,7 +40,7 @@ public class Environment {
             // for each name in definitions, run DFS on each child node, keep track of nodes visited
             ListExpression expression = definitions.get(name);
             Set<ListExpression> visited = new HashSet<>();
-            Set<ListExpression> finalVisited = findDependencies(expression, visited);
+            Set<ListExpression> finalVisited = findDependencies(name, expression, visited);
             assert !finalVisited.contains(name) : name.toString() + " has a mail loop in its definition! Please reassign " + name.toString();
         }
     }
@@ -83,16 +83,18 @@ public class Environment {
     
     /**
      * Performs a DFS search on a listname to find its ListExpression dependencies.
+     * @param name the listname to perform the DFS search on
      * @param expression the expression assigned to the listname
      * @param visited a set of ListExpressions in the listname's dependencies
      * @return the set of ListExpressions in the listname's dependencies
      */
-    private Set<ListExpression> findDependencies(ListExpression expression, Set<ListExpression> visited) {
-        List<ListExpression> children = expression.getChildren();
+    private Set<ListExpression> findDependencies(Name name, ListExpression expression, Set<ListExpression> visited) {
+        Set<ListExpression> children = expression.getChildren();
         if (children.size() != 0) {
             visited.addAll(children);
             for (ListExpression child : children) {
-                visited = findDependencies(child, visited);
+                if (child.equals(name)) { break; }
+                visited = findDependencies(name, child, visited);
             }
         }
         return visited;

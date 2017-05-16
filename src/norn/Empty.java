@@ -1,8 +1,6 @@
 package norn;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /** 
@@ -23,8 +21,8 @@ public class Empty implements ListExpression {
     }
     
     @Override
-    public List<ListExpression> getChildren() {
-        return Collections.emptyList();
+    public Set<ListExpression> getChildren() {
+        return Collections.emptySet();
     }
 
     /**
