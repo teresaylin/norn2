@@ -1,6 +1,8 @@
 package norn;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -40,8 +42,8 @@ public class Name implements ListExpression {
     }
     
     @Override
-    public Set<ListExpression> getChildren() {
-        return Collections.emptySet();
+    public Set<ListExpression> getChildren(Environment environment) {
+        return new HashSet<ListExpression>(Arrays.asList(environment.getExpression(this)));
     }
     
     /**

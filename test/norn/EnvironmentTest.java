@@ -109,4 +109,28 @@ public class EnvironmentTest {
         assertEquals("expected correct name for multiple name environment", expectedNames, testEnv.getNames());
     }
     
+///////////////////////////////////////////////////////////////////////////
+    // Testing mail loops
+//    @Test(expected=AssertionError.class)
+    public void testMailLoop() {
+        // a = a, b
+        // b = c
+        // c = d
+        // d = a
+        final Environment testEnv = new Environment();
+        testEnv.reassign(new Name("a"), new Name("b"));
+        testEnv.reassign(new Name("b"), new Name("c"));
+        testEnv.reassign(new Name("c"), new Name("d"));
+        testEnv.reassign(new Name("d"), new Name("a"));
+    }
+    
+    @Test(expected=AssertionError.class)
+    public void testMailLoopAB() {
+        final Environment testEnv = new Environment();
+        testEnv.reassign(new Name("a"), new Name("b"));
+        testEnv.reassign(new Name("b"), new Name("a"));
+    }
+    
 }
+
+

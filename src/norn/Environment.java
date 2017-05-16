@@ -37,13 +37,16 @@ public class Environment {
     private void checkRep() {
         assert definitions != null;
         for (Name name : definitions.keySet()) {
+            System.out.println("checking key: " + name.toString());
             // for each name in definitions, run DFS on each child node, keep track of nodes visited
             ListExpression expression = definitions.get(name);
             Set<ListExpression> visited = new HashSet<>();
             Set<ListExpression> finalVisited = findDependencies(name, expression, visited);
-            System.out.println("check for dependencies");
+            System.out.println("finalVisited: " + finalVisited);
+
             assert !finalVisited.contains(name) : name.toString() + " has a mail loop in its definition! Please reassign " + name.toString();
         }
+        System.out.println(definitions);
     }
     
     /**
@@ -91,7 +94,10 @@ public class Environment {
      */
     private Set<ListExpression> findDependencies(Name name, ListExpression expression, Set<ListExpression> visited) {
         Set<ListExpression> children = expression.getChildren(this);
+        System.out.println("children of " + expression.toString() + ": " + children);
+        System.out.println("how many children: " + children.size());
         if (children.size() != 0) {
+            System.out.println("has children!");
             visited.addAll(children);
             for (ListExpression child : children) {
                 if (child.equals(name)) { break; }
