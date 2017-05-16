@@ -360,16 +360,18 @@ public class ExpressionTest {
     // Nesting in expression
     @Test
     public void testChildrenIntersect() {
+        Environment env = new Environment();
         Set<ListExpression> children = new HashSet<>(Arrays.asList(new Union(AB, SPECIAL), new Name("a")));
-        assertEquals("expected correct children of intersect/union", children, ONE_EVAL.getChildren());
+        assertEquals("expected correct children of intersect/union", children, ONE_EVAL.getChildren(env));
     }
     
     // Union/Difference
     // Nesting in expression
     @Test
     public void testChildrenDifference() {
+        Environment env = new Environment();
         Set<ListExpression> children = new HashSet<>(Arrays.asList(new Union(new Union(AB, SPECIAL), new Name("a")), new Name("b")));
-        assertEquals("expected correct children of difference/union", children, TWO_EVAL.getChildren());
+        assertEquals("expected correct children of difference/union", children, TWO_EVAL.getChildren(env));
     }
     
     
