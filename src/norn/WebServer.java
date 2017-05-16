@@ -23,7 +23,6 @@ import lib6005.parser.UnableToParseException;
  */
 public class WebServer {
     public static final int PORT = 5021;
-//    private static final int PORT = 5000 + new Random().nextInt(1 << 99);
     private final HttpServer server;
     private final Environment environment;
     private static final String MAIL_TO_DELIMITER = ",";
@@ -64,7 +63,8 @@ public class WebServer {
         // Get recipients of list expression from this GET request
         try {
             Set<Recipient> recipients = parseInput(expression);
-            
+            System.out.println("found recipients");
+            System.out.println(recipients);
             // Create mailto and recipient lists for output
             String mailToList = "";
             String recipientList;
@@ -81,26 +81,26 @@ public class WebServer {
                 recipientList = recipientList.substring(0, recipientList.length() - RECIPIENT_LIST_DELIMITER.length());
                 
             }
+            
             System.out.println(mailToList);
             
             // Create mailto message
             String mailToMessage = "<a href=\"mailto:" + mailToList + "\">email these recipients</a>";
             // Create full response message
             response = mailToMessage + LINE_BREAK + recipientList;
-            // Set exchange headers
-            exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
-            exchange.sendResponseHeaders(200, 0);
-            
         } catch (IllegalArgumentException e) {
             response = "<p>Invalid list expression (after http://localhost ... eval/). Please change to a valid list expression."
-                + "For valid list expressions, see specifications for Norn1 and Norn2.</p>";
+                + " For valid list expressions, see specifications for Norn1 and Norn2.</p>";
         }
         
+        // Set exchange headers
+        exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
+        exchange.sendResponseHeaders(200, 0);
         // Write the message
         System.out.println("writing message");
         PrintWriter out = new PrintWriter(exchange.getResponseBody(), true);
         out.println(response);
-        System.out.println("print response");
+        System.out.println("print response" + response);
         out.close();
     }
     
@@ -120,7 +120,7 @@ public class WebServer {
     
     private Set<Recipient> parseInput(String expression) {
         try {
-            ListExpression parsed = ListExpression.parse(expression); 
+            ListExpression parsed = ListExpression.parse(expression);
             return parsed.recipients(environment);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("invalid expression");

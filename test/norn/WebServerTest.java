@@ -46,7 +46,7 @@ public class WebServerTest {
      */
     
     // tests valid GET request, 1 web user
-//    @Test
+    @Test
     public void testValid() throws IOException {
         final WebServer server = new WebServer();
         final String valid = "http://localhost:" + server.port() + "/eval/tlin15@mit.edu";
@@ -68,7 +68,7 @@ public class WebServerTest {
     }
     
     // tests invalid GET request (invalid expression after port)
-//    @Test
+    @Test
     public void testInvalid() throws IOException {
         final WebServer server = new WebServer();
         final String invalid = "http://localhost:" + server.port() + "/???/!!!";
@@ -108,14 +108,14 @@ public class WebServerTest {
         final InputStream input = url.openStream();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         assertEquals("<p>Invalid list expression (after http://localhost ... eval/). Please change to a valid list expression."
-                + "For valid list expressions, see specifications for Norn1 and Norn2.</p>", reader.readLine());
+                + " For valid list expressions, see specifications for Norn1 and Norn2.</p>", reader.readLine());
         assertEquals("end of stream", null, reader.readLine());
         server.stop();
     }    
     
     // tests 0 console users, >1 web user
     // tests undefined list, reassignment, mail loop, union, difference, intersection, sequence, grouping, definition, nested definition
-//    @Test
+    @Test
     public void testMultipleWebUser() throws IOException {
         final WebServer server = new WebServer();
         
@@ -147,55 +147,45 @@ public class WebServerTest {
         // reading input1
         final InputStream input1 = url1.openStream();
         final BufferedReader reader1 = new BufferedReader(new InputStreamReader(input1));
-        assertEquals("<a href=mailto:>email these recipients</a>", reader1.readLine());
-        assertEquals("<br>", reader1.readLine());
-        assertEquals("{}", reader1.readLine());
+        assertEquals("<a href=\"mailto:\">email these recipients</a><br>{}", reader1.readLine());
         assertEquals("end of stream", null, reader1.readLine());
         
         // reading input2
         final InputStream input2 = url2.openStream();
         final BufferedReader reader2 = new BufferedReader(new InputStreamReader(input2));
-        assertEquals("<a href=mailto:b@c,d@e>email these recipients</a>", reader2.readLine());
-        assertEquals("<br>", reader2.readLine());
-        assertEquals("b@c, d@e", reader2.readLine());
+        assertEquals("<a href=\"mailto:b@c,d@e\">email these recipients</a><br>b@c, d@e", reader2.readLine());
         assertEquals("end of stream", null, reader2.readLine());
         
         // reading input3
         final InputStream input3 = url3.openStream();
         final BufferedReader reader3 = new BufferedReader(new InputStreamReader(input3));
-        assertEquals("<a href=mailto:x@y>email these recipients</a>", reader3.readLine());
-        assertEquals("<br>", reader3.readLine());
-        assertEquals("x@y", reader3.readLine());
+        assertEquals("<a href=\"mailto:x@y\">email these recipients</a><br>x@y", reader3.readLine());
         assertEquals("end of stream", null, reader3.readLine());
         
         // reading input4
         final InputStream input4 = url4.openStream();
         final BufferedReader reader4 = new BufferedReader(new InputStreamReader(input4));
-        assertEquals("<a href=mailto:x@y>email these recipients</a>", reader4.readLine());
-        assertEquals("<br>", reader4.readLine());
-        assertEquals("x@y", reader4.readLine());
+        assertEquals("<a href=\"mailto:x@y\">email these recipients</a><br>x@y", reader4.readLine());
         assertEquals("end of stream", null, reader4.readLine());
         
         // reading input5
         final InputStream input5 = url5.openStream();
         final BufferedReader reader5 = new BufferedReader(new InputStreamReader(input5));
-        assertEquals("<a href=mailto:>email these recipients</a>", reader5.readLine());
-        assertEquals("<br>", reader5.readLine());
-        assertEquals("{}", reader5.readLine());
+        assertEquals("<a href=\"mailto:\">email these recipients</a><br>{}", reader5.readLine());
         assertEquals("end of stream", null, reader5.readLine());
         
         // reading input6
         final InputStream input6 = url6.openStream();
         final BufferedReader reader6 = new BufferedReader(new InputStreamReader(input6));
         assertEquals("Mail loop encountered! This is not a valid list expression."
-                    + "For valid list expressions, see specifications for Norn1 and Norn2.", reader6.readLine());
+                    + " For valid list expressions, see specifications for Norn1 and Norn2.", reader6.readLine());
         assertEquals("end of stream", null, reader5.readLine());
 
         server.stop();
     }
     
     // covers nested subexpressions
-//    @Test
+    @Test
     public void testNestedExpressions() throws IOException {
         final WebServer server = new WebServer();
 
@@ -221,33 +211,25 @@ public class WebServerTest {
         // reading input1
         final InputStream input1 = url1.openStream();
         final BufferedReader reader1 = new BufferedReader(new InputStreamReader(input1));
-        assertEquals("<a href=mailto:>email these recipients</a>", reader1.readLine());
-        assertEquals("<br>", reader1.readLine());
-        assertEquals("{}", reader1.readLine());
+        assertEquals("<a href=\"mailto:\">email these recipients</a><br>{}", reader1.readLine());
         assertEquals("end of stream", null, reader1.readLine());
         
         // reading input2
         final InputStream input2 = url2.openStream();
         final BufferedReader reader2 = new BufferedReader(new InputStreamReader(input2));
-        assertEquals("<a href=mailto:>email these recipients</a>", reader2.readLine());
-        assertEquals("<br>", reader2.readLine());
-        assertEquals("{}", reader2.readLine());
+        assertEquals("<a href=\"mailto:\">email these recipients</a><br>{}", reader2.readLine());
         assertEquals("end of stream", null, reader2.readLine());
         
         // reading input3
         final InputStream input3 = url3.openStream();
         final BufferedReader reader3 = new BufferedReader(new InputStreamReader(input3));
-        assertEquals("<a href=mailto:x@y>email these recipients</a>", reader3.readLine());
-        assertEquals("<br>", reader3.readLine());
-        assertEquals("x@y", reader3.readLine());
+        assertEquals("<a href=\"mailto:x@y\">email these recipients</a><br>x@y", reader3.readLine());
         assertEquals("end of stream", null, reader3.readLine());
         
         // reading input4
         final InputStream input4 = url4.openStream();
         final BufferedReader reader4 = new BufferedReader(new InputStreamReader(input4));
-        assertEquals("<a href=mailto:x@y>email these recipients</a>", reader4.readLine());
-        assertEquals("<br>", reader4.readLine());
-        assertEquals("x@y", reader4.readLine());
+        assertEquals("<a href=\"mailto:x@y\">email these recipients</a><br>x@y", reader4.readLine());
         assertEquals("end of stream", null, reader4.readLine());
 
         server.stop();
