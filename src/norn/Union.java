@@ -1,6 +1,10 @@
 package norn;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,6 +48,11 @@ public class Union implements ListExpression {
         allRecipients.addAll(right.recipients(environment));
         return allRecipients;
         
+    }
+    
+    @Override
+    public List<ListExpression> getChildren() {
+        return new ArrayList<>(Arrays.asList(left, right));
     }
     
     /**

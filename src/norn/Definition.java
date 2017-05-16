@@ -1,5 +1,8 @@
 package norn;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,6 +38,11 @@ public class Definition implements ListExpression {
     public Set<Recipient> recipients(Environment environment) {
         environment.reassign(name, expression);
         return expression.recipients(environment);
+    }
+    
+    @Override
+    public List<ListExpression> getChildren() {
+        return new ArrayList<>(Arrays.asList(name, expression));
     }
 
     /*

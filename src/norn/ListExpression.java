@@ -1,5 +1,6 @@
 package norn;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +44,10 @@ public interface ListExpression {
      * @return the Set of unique recipients represented
      */
     public Set<Recipient> recipients(Environment environment);
+    
+    
+    public List<ListExpression> getChildren();
+    
     
     /**
      * @return a parsable representation of this listexpression, such that

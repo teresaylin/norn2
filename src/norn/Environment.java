@@ -1,7 +1,10 @@
 package norn;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +27,7 @@ public class Environment {
      */
     public Environment() {
         definitions = Collections.synchronizedMap(new HashMap<Name, ListExpression>());
+        checkRep();
     }
 
     /**
@@ -34,11 +38,11 @@ public class Environment {
         // assert that there are no mail loops
         assert definitions != null;
         for (Name name : definitions.keySet()) {
+            // for each name in definitions, run DFS on each child node, keep track of nodes visited
             ListExpression expression = definitions.get(name);
-            // check for mail loop
-            // a = a is not a mail loop
-            // a = b,c and then b = a is a mail loop
-            // use graph to check for mail loops
+            Set<ListExpression> visited = new HashSet<>();
+            Set<ListExpression> finalVisited = findDependencies(expression, visited);
+            assert !finalVisited.contains(name) : name.toString() + " has a mail loop in its definition! Please reassign " + name.toString();
         }
     }
     
@@ -74,6 +78,18 @@ public class Environment {
     public ListExpression reassign(Name name, ListExpression expression) {
         ListExpression exp = getExpression(name);
         definitions.put(name, expression);
+        checkRep();
         return exp;
+    }
+    
+    private Set<ListExpression> findDependencies(ListExpression expression, Set<ListExpression> visited) {
+        List<ListExpression> children = expression.getChildren();
+        if (children.size() != 0) {
+            visited.addAll(children);
+            for (ListExpression child : children) {
+                visited = findDependencies(child, visited);
+            }
+        }
+        return visited;
     }
 }

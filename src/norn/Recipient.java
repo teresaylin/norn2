@@ -1,7 +1,9 @@
 package norn;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -42,6 +44,11 @@ public class Recipient implements ListExpression {
     @Override
     public Set<Recipient> recipients(Environment environment) {
         return new HashSet<Recipient>(Arrays.asList(this));
+    }
+    
+    @Override
+    public List<ListExpression> getChildren() {
+        return Collections.emptyList();
     }
    
     /**

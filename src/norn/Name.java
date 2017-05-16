@@ -1,5 +1,9 @@
 package norn;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,6 +40,11 @@ public class Name implements ListExpression {
     public Set<Recipient> recipients(Environment environment) {
         ListExpression expr = environment.getExpression(this);
         return expr.recipients(environment);
+    }
+    
+    @Override
+    public List<ListExpression> getChildren() {
+        return Collections.emptyList();
     }
     
     /**

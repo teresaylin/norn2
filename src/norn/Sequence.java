@@ -1,5 +1,8 @@
 package norn;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +41,11 @@ public class Sequence implements ListExpression {
     @Override
     public Set<Recipient> recipients(Environment environment) {
         return right.recipients(environment);
+    }
+    
+    @Override
+    public List<ListExpression> getChildren() {
+        return new ArrayList<>(Arrays.asList(left, right));
     }
     
     /*
