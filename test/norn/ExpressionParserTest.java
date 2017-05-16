@@ -172,8 +172,8 @@ public class ExpressionParserTest {
     public void testIllegalSeparation() {
         try {
             final ListExpression expression = ListExpression.parse("a@b c@d");
-        } catch (AssertionError e) {
-            assertTrue("Expected human readable error message", e.getMessage().equals(ListExpressionParser.ILLEGAL_INPUT_MESSAGE));
+        } catch (IllegalArgumentException e) {
+            assertTrue("Expected human readable error message", e.getMessage().equals("expression invalid"));
         }
     }
     
@@ -182,8 +182,8 @@ public class ExpressionParserTest {
     public void testInvalidEmail() {
         try {
             final ListExpression expression = ListExpression.parse("username@");
-        } catch (AssertionError e) {
-            assertTrue("Expected human readable error message", e.getMessage().equals(ListExpressionParser.ILLEGAL_INPUT_MESSAGE));
+        } catch (IllegalArgumentException e) {
+            assertTrue("Expected human readable error message", e.getMessage().equals("expression invalid"));
         }
     }
 
