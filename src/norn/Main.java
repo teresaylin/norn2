@@ -161,15 +161,16 @@ public class Main {
                         File loadFile = new File(fileName);
                         if ( ! loadFile.isFile())
                             throw new IllegalArgumentException("file not found: \"" + loadFile + "\"");
-                        server.load(loadFile);
+                        load(loadFile, server.getEnvironment());
                     }
                     
                 } else if (input.startsWith(SAVE_COMMAND)) {
                     // handle !save
-                    server.save(input.substring(prefixLength).replaceAll("\\s", ""));
+                    save(input.substring(prefixLength).replaceAll("\\s", ""), server.getEnvironment());
                     
                 } else {
-                    Set<Recipient> parsed = ListExpression.parse(input).recipients(server.getEnvironment()); // TODO: call recipients
+                    // handle all list expressions
+                    Set<Recipient> parsed = ListExpression.parse(input).recipients(server.getEnvironment()); 
                     System.out.println(parsed.toString().replaceAll("[\\[\\]]", ""));
                 }
             } catch(IllegalArgumentException e){
@@ -180,16 +181,16 @@ public class Main {
    
     /**
      * Saves all definitions in this Environment to a file.
-     * @param filename The name of the file to be written
-     * @param expression 
+     * @param filename the name of the file to be written
+     * @param env environment whose definitions are to be saved
      * @return true if definitions were successfully saved to fileName
      */
-    public boolean save(String filename, Environment env) {
+    private static boolean save(String filename, Environment env) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
             Set<Name> names = env.getNames();
             for (Name n : names) {
-                writer.write(n.toString() + " = (" + env.getExpression(n).toString() + ")"); // TODO should this be recipients?
+                writer.write(n.toString() + " = (" + env.getExpression(n).toString() + ")"); 
                 writer.write("; ");
             }
             writer.flush();
@@ -208,9 +209,9 @@ public class Main {
      *  The contents of the file should be a single valid list expression. 
      * @return true if the contents of the file were successfully loaded,
      *  false otherwise.
-     * @throws FileNotFoundException if file not found
+     * @throws IOException 
      */
-    public boolean load(File file, Environment env) throws FileNotFoundException {
+    private static boolean load(File file, Environment env) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         try {
             String toParse = reader.readLine();
@@ -219,7 +220,10 @@ public class Main {
             return true;
         } catch (IOException e) {
             System.out.println("Invalid input, could not parse: " + e.getMessage());
+            return false;
         }
-        return false;
+        finally{
+            reader.close();
+        }
     }
 }
