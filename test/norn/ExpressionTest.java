@@ -75,9 +75,6 @@ public class ExpressionTest {
     private final static Recipient CD = new Recipient("c@d");
     private final static Recipient SPECIAL = new Recipient("-_@b");
     
-    // Environment (mutable)
-    private final static Environment EMPTY_ENVIRONMENT = new Environment();
-    
     // ListExpressions (immutable)
     
     // (AB, SPECIAL) * a
@@ -134,7 +131,7 @@ public class ExpressionTest {
         twoEnvironment.reassign(new Name("a"), new Union(AB, CD)); // a: a@b, c@d
         twoEnvironment.reassign(new Name("b"), new Difference(new Name("a"), CD)); // b: a ! c@d
         Set<ListExpression> aSet = new HashSet<>();
-        aSet.add(new Recipient("a@b"));
+        aSet.add(new Recipient("c@d"));
         aSet.add(new Recipient("-_@b"));
         assertEquals("Expected correct recipients", aSet, TWO_EVAL.recipients(twoEnvironment));
     }
@@ -144,32 +141,33 @@ public class ExpressionTest {
     // undefined Name
     @Test   
     public void testRecipientMissingDefinition() { 
+        final Environment emptyEnvironment = new Environment();
         Set<ListExpression> aSet = new HashSet<>();
-        assertEquals("Expected correct recipients", aSet, ONE_EVAL.recipients(EMPTY_ENVIRONMENT));
+        assertEquals("Expected correct recipients", aSet, ONE_EVAL.recipients(emptyEnvironment));
     }
     
     // Sequence; Definition in Sequence
     // add new definition during evaluation
     @Test   
     public void testRecipientAddNewDefinition() { 
+        final Environment emptyEnvironment = new Environment();
         Set<ListExpression> aSet = new HashSet<>();
         aSet.add(new Recipient("a@b"));
         aSet.add(new Recipient("c@d"));
-        assertEquals("Expected correct recipients", aSet, SEQ_EVAL.recipients(EMPTY_ENVIRONMENT));
+        assertEquals("Expected correct recipients", aSet, SEQ_EVAL.recipients(emptyEnvironment));
     }
     
     // replace definition during evaluation
     // nested definition update
     @Test   
     public void testRecipientReplaceDefinition() { 
-        final ListExpression testExpr = new Recipient("b");
+        final ListExpression testExpr = new Name("b");
         
         final Environment twoEnvironment = new Environment();
         twoEnvironment.reassign(new Name("a"), new Union(AB, CD)); // a: a@b, c@d
         twoEnvironment.reassign(new Name("b"), new Difference(new Name("a"), CD)); // b: a ! c@d
         Set<ListExpression> aSet = new HashSet<>();
         aSet.add(new Recipient("a@b"));
-        aSet.add(new Recipient("c@d"));
         assertEquals("Expected correct recipients before reassignment", aSet, testExpr.recipients(twoEnvironment));
         
         // Reassignment
@@ -197,18 +195,20 @@ public class ExpressionTest {
     // Definition within another Definition
     @Test   
     public void testRecipientNestedDefinition() { 
+        final Environment emptyEnvironment = new Environment();
         Set<ListExpression> aSet = new HashSet<>();
         aSet.add(new Recipient("-_@b"));
-        assertEquals("Expected correct recipients", aSet, ASSIGN_EVAL.recipients(EMPTY_ENVIRONMENT));
+        assertEquals("Expected correct recipients", aSet, ASSIGN_EVAL.recipients(emptyEnvironment));
     }
     
     // Sequence within Union
     @Test   
     public void testRecipientSequenceInUnion() { 
+        final Environment emptyEnvironment = new Environment();
         Set<ListExpression> aSet = new HashSet<>();
         aSet.add(new Recipient("c@d"));
         aSet.add(new Recipient("-_@b"));
-        assertEquals("Expected correct recipients", aSet, SEQ_WITHIN.recipients(EMPTY_ENVIRONMENT));
+        assertEquals("Expected correct recipients", aSet, SEQ_WITHIN.recipients(emptyEnvironment));
     }
     
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -216,75 +216,82 @@ public class ExpressionTest {
     // 0 recipients
     @Test 
     public void testRecipientEmptyList() {
+        final Environment emptyEnvironment = new Environment();
         String input = ""; 
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> emptySet = new HashSet<>();
-        assertTrue("Expected empty recipients set", parsed.recipients(EMPTY_ENVIRONMENT).equals(emptySet));
+        assertTrue("Expected empty recipients set", parsed.recipients(emptyEnvironment).equals(emptySet));
     }
     
     // 1 recipient
     // letters
     @Test 
     public void testRecipientSingleRecipient() {
+        final Environment emptyEnvironment = new Environment();
         String input = "joe@shmoe.com";
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> oneElementSet = new HashSet<>();
         oneElementSet.add(new Recipient("joe@shmoe.com"));
-        assertTrue("Expected one element in recipients set", parsed.recipients(EMPTY_ENVIRONMENT).equals(oneElementSet));
+        assertTrue("Expected one element in recipients set", parsed.recipients(emptyEnvironment).equals(oneElementSet));
     }
     
     // Union
     // >1 recipient
     @Test 
     public void testRecipientMultipleRecipients() {
+        final Environment emptyEnvironment = new Environment();
         String input = "joe@shmoe.com, average@joe.com, gi@joe";
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> multiElementSet = new HashSet<>();
         multiElementSet.add(new Recipient("joe@shmoe.com"));
         multiElementSet.add(new Recipient("average@joe.com"));
         multiElementSet.add(new Recipient("gi@joe"));
-        assertTrue("Expected many element in recipients set", parsed.recipients(EMPTY_ENVIRONMENT).equals(multiElementSet));    
+        assertTrue("Expected many element in recipients set", parsed.recipients(emptyEnvironment).equals(multiElementSet));    
     }
     
     // Union
     // Duplicates
     @Test
     public void testRecipientDuplicateRecipients() {
+        final Environment emptyEnvironment = new Environment();
         String input = "joe@shmoe.com, average@joe.com, gi@joe, average@joe.com";
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> multiElementSet = new HashSet<>();
         multiElementSet.add(new Recipient("joe@shmoe.com"));
         multiElementSet.add(new Recipient("average@joe.com"));
         multiElementSet.add(new Recipient("gi@joe"));
-        assertTrue("Expected no duplicates in recipients set", parsed.recipients(EMPTY_ENVIRONMENT).equals(multiElementSet));    
+        assertTrue("Expected no duplicates in recipients set", parsed.recipients(emptyEnvironment).equals(multiElementSet));    
     }
     
     // Union
     // Equivalent recipients
     @Test 
     public void testRecipientMultipleEquivalentRecipients() {
+        final Environment emptyEnvironment = new Environment();
         String input = "JAMUN@blah, jamun@BLAH"; 
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> multiElementSet = new HashSet<>();
         multiElementSet.add(new Recipient("jamun@blah"));
-        assertTrue("Expected no duplicates in recipients set", parsed.recipients(EMPTY_ENVIRONMENT).equals(multiElementSet));    
+        assertTrue("Expected no duplicates in recipients set", parsed.recipients(emptyEnvironment).equals(multiElementSet));    
     }
     
     // Definition
     // 1 recipient
     @Test
     public void testRecipientSingleDefinition() {
+        final Environment emptyEnvironment = new Environment();
         String input = "Hogwarts = harry@potter";
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> multiElementSet = new HashSet<>();
         multiElementSet.add(new Recipient("harry@potter"));
-        assertTrue("Expected one recipient in Hogwarts definition", parsed.recipients(EMPTY_ENVIRONMENT).equals(multiElementSet));
+        assertTrue("Expected one recipient in Hogwarts definition", parsed.recipients(emptyEnvironment).equals(multiElementSet));
     }
     
     // Definition
     // >1 recipient
     @Test
     public void testRecipientManyInOneDefinition() {
+        final Environment emptyEnvironment = new Environment();
         String input = "Hogwarts = harry@potter, hermione@granger, ron@weasley, albus@dumbledore";
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> multiElementSet = new HashSet<>();
@@ -292,7 +299,7 @@ public class ExpressionTest {
         multiElementSet.add(new Recipient("hermione@granger"));
         multiElementSet.add(new Recipient("ron@weasley"));
         multiElementSet.add(new Recipient("albus@dumbledore"));
-        assertTrue("Expected many recipients in Hogwarts definition", parsed.recipients(EMPTY_ENVIRONMENT).equals(multiElementSet));
+        assertTrue("Expected many recipients in Hogwarts definition", parsed.recipients(emptyEnvironment).equals(multiElementSet));
     }
     
     // Union
@@ -300,43 +307,47 @@ public class ExpressionTest {
     // numbers/special characters
     @Test
     public void testRecipientWithEmptyUnion() { 
+        final Environment emptyEnvironment = new Environment();
         String input = "he1lo@here,, t-._re@there"; 
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> aSet = new HashSet<>();
         aSet.add(new Recipient("he1lo@here"));
-        aSet.add(new Recipient("t-._e@there"));
-        assertTrue("Expected union of two emails and empty set", parsed.recipients(EMPTY_ENVIRONMENT).equals(aSet));
+        aSet.add(new Recipient("t-._re@there"));
+        assertTrue("Expected union of two emails and empty set", parsed.recipients(emptyEnvironment).equals(aSet));
     }
     
     // Difference
     // Empty
     @Test 
     public void testRecipientWithEmptyDifference() { 
+        final Environment emptyEnvironment = new Environment();
         String input = "hello@here! "; 
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> aSet = new HashSet<>();
         aSet.add(new Recipient("hello@here"));
-        assertTrue("Expected difference of email and empty set", parsed.recipients(EMPTY_ENVIRONMENT).equals(aSet));
+        assertTrue("Expected difference of email and empty set", parsed.recipients(emptyEnvironment).equals(aSet));
     }
     
     // Intersection
     // Empty
     @Test  
     public void testRecipientWithEmptyIntersection() { 
+        final Environment emptyEnvironment = new Environment();
         String input = "(hello@here,there@there)*"; 
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> aSet = new HashSet<>();
-        assertTrue("Expected intersection of empty set and email list", parsed.recipients(EMPTY_ENVIRONMENT).equals(aSet));
+        assertTrue("Expected intersection of empty set and email list", parsed.recipients(emptyEnvironment).equals(aSet));
     }
     
     // Definition
     // Empty value
     @Test 
     public void testRecipientWithEmptyDefinition() { 
+        final Environment emptyEnvironment = new Environment();
         String input = "a = "; 
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> aSet = new HashSet<>();
-        assertTrue("Expected empty set", parsed.recipients(EMPTY_ENVIRONMENT).equals(aSet));
+        assertTrue("Expected empty set", parsed.recipients(emptyEnvironment).equals(aSet));
     }
     
     
@@ -347,7 +358,7 @@ public class ExpressionTest {
     // Nesting in expression
     @Test
     public void testChildrenIntersect() {
-        Set<ListExpression> children = new HashSet<>(Arrays.asList(new Union(AB, CD), new Name("a")));
+        Set<ListExpression> children = new HashSet<>(Arrays.asList(new Union(AB, SPECIAL), new Name("a")));
         assertEquals("expected correct children of intersect/union", children, ONE_EVAL.getChildren());
     }
     
@@ -374,7 +385,7 @@ public class ExpressionTest {
     @Test
     public void testToStringDefinition() {
         final ListExpression e = ListExpression.parse("a = b@mit.edu, c");
-        assertEquals("expected correct toString()", "a = b@mit.edu, c", e.toString());
+        assertEquals("expected correct toString()", "a = (b@mit.edu, c)", e.toString());
     }
     
     // Recipient, uppercase
@@ -418,14 +429,14 @@ public class ExpressionTest {
     @Test
     public void testToStringName() {
         ListExpression e = ListExpression.parse("nAme1_-.");
-        assertEquals("expected correct toString()", "nAme1_-.", e.toString());
+        assertEquals("expected correct toString()", "name1_-.", e.toString());
     }
     
     // Sequence
     @Test
     public void testToStringSequence() {
         ListExpression e = ListExpression.parse("nAme1_-.; a = 5");
-        assertEquals("expected correct toString()", "nAme1_-.; a = 5", e.toString());
+        assertEquals("expected correct toString()", "name1_-.; a = 5", e.toString());
     }
     
 ///////////////////////////////////////////////////////////////////////////////////////////////////
