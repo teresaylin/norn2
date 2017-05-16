@@ -2,6 +2,7 @@ package norn;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ public class ExpressionTest {
      *
      *  recipients(environment)/environment constructor/environment.reassign():
      *      each concrete variant class
+     *      letters/numbers/special characters
      *      number of recipients: 0, 1, >1
      *      duplicate recipients
      *      includes empty set
@@ -48,6 +50,11 @@ public class ExpressionTest {
      *      definition within another definition
      *      listname defined with itself
      *      sequence within another variant
+     *  
+     *  getChildren()
+     *      duplicate children
+     *      nesting in expression
+     *      each concrete variant class
      *      
      *  toString():
      *      case - lower, upper
@@ -68,20 +75,25 @@ public class ExpressionTest {
     private final static Recipient CD = new Recipient("c@d");
     private final static Recipient SPECIAL = new Recipient("-_@b");
     
-    // Environments (mutable)
+    // Environment (mutable)
     private final static Environment EMPTY_ENVIRONMENT = new Environment();
     
     // ListExpressions (immutable)
-    private final static Intersect ONE_EVAL = 
-            new Intersect(new Union(AB, SPECIAL), new Name("a")); // (AB, SPECIAL) * a
-    private final static Difference TWO_EVAL = 
-            new Difference(new Union(new Union(AB, SPECIAL), new Name("a")), new Name("b")); // ((AB, SPECIAL), a) ! b
-    private final static Sequence SEQ_EVAL = 
-            new Sequence(new Definition(new Name("c"), new Union(AB, CD)), new Name("c")); // c = AB, CD; c
-    private final static Definition ASSIGN_EVAL = 
-            new Definition(new Name("a"), new Definition(new Name("b"), SPECIAL)); // a = (b = SPECIAL)
-    private final static Union SEQ_WITHIN = 
-            new Union(new Sequence(AB, CD), SPECIAL); // (AB; CD), SPECIAL
+    
+    // (AB, SPECIAL) * a
+    private final static Intersect ONE_EVAL = new Intersect(new Union(AB, SPECIAL), new Name("a")); 
+    
+    // ((AB, SPECIAL), a) ! b
+    private final static Difference TWO_EVAL = new Difference(new Union(new Union(AB, SPECIAL), new Name("a")), new Name("b")); 
+    
+    // c = AB, CD; c
+    private final static Sequence SEQ_EVAL = new Sequence(new Definition(new Name("c"), new Union(AB, CD)), new Name("c")); 
+    
+    // a = (b = SPECIAL)
+    private final static Definition ASSIGN_EVAL = new Definition(new Name("a"), new Definition(new Name("b"), SPECIAL)); 
+    
+    // (AB; CD), SPECIAL
+    private final static Union SEQ_WITHIN = new Union(new Sequence(AB, CD), SPECIAL); 
     
 
     @Test(expected=AssertionError.class)
@@ -89,10 +101,9 @@ public class ExpressionTest {
         assert false; // make sure assertions are enabled with VM argument: -ea
     }
     
+///////////////////////////////////////////////////////////////////////////////////////////////////
     // Testing recipients...
 
-    
-    // Looking up Names...
     
     // Intersect/Union/Name
     // reassign(): new definition, replace definition
@@ -183,8 +194,6 @@ public class ExpressionTest {
         assertEquals("Expected correct recipients", aSet, testExpr.recipients(oneEnvironment));
     }
 
-    // No Names to look up... 
-    
     // Definition within another Definition
     @Test   
     public void testRecipientNestedDefinition() { 
@@ -201,6 +210,8 @@ public class ExpressionTest {
         aSet.add(new Recipient("-_@b"));
         assertEquals("Expected correct recipients", aSet, SEQ_WITHIN.recipients(EMPTY_ENVIRONMENT));
     }
+    
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
     // 0 recipients
     @Test 
@@ -212,6 +223,7 @@ public class ExpressionTest {
     }
     
     // 1 recipient
+    // letters
     @Test 
     public void testRecipientSingleRecipient() {
         String input = "joe@shmoe.com";
@@ -285,13 +297,14 @@ public class ExpressionTest {
     
     // Union
     // Includes empty
+    // numbers/special characters
     @Test
     public void testRecipientWithEmptyUnion() { 
-        String input = "hello@here,, there@there"; 
+        String input = "he1lo@here,, t-._re@there"; 
         ListExpression parsed = ListExpression.parse(input);
         Set<ListExpression> aSet = new HashSet<>();
-        aSet.add(new Recipient("hello@here"));
-        aSet.add(new Recipient("there@there"));
+        aSet.add(new Recipient("he1lo@here"));
+        aSet.add(new Recipient("t-._e@there"));
         assertTrue("Expected union of two emails and empty set", parsed.recipients(EMPTY_ENVIRONMENT).equals(aSet));
     }
     
@@ -327,6 +340,24 @@ public class ExpressionTest {
     }
     
     
+///////////////////////////////////////////////////////////////////////////////////////////////////
+    // getChildren()
+    
+    // Union/Intersect
+    // Nesting in expression
+    @Test
+    public void testChildrenIntersect() {
+        Set<ListExpression> children = new HashSet<>(Arrays.asList(new Union(AB, CD), new Name("a")));
+        assertEquals("expected correct children of intersect/union", children, ONE_EVAL.getChildren());
+    }
+    
+    // Union/Difference
+    // Nesting in expression
+    @Test
+    public void testChildrenDifference() {
+        Set<ListExpression> children = new HashSet<>(Arrays.asList(new Union(new Union(AB, SPECIAL), new Name("a")), new Name("b")));
+        assertEquals("expected correct children of difference/union", children, TWO_EVAL.getChildren());
+    }
     
     
 ///////////////////////////////////////////////////////////////////////////////////////////////////
