@@ -8,17 +8,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
+import java.util.Collections;
+import java.util.Random;
 import java.util.Set;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import lib6005.parser.UnableToParseException;
+
 /**
  * Server to handle web client requests to ListExpression system.
  */
 public class WebServer {
     public static final int PORT = 5021;
+//    private static final int PORT = 5000 + new Random().nextInt(1 << 99);
     private final HttpServer server;
     private final Environment environment;
     private static final String MAIL_TO_DELIMITER = ",";
@@ -33,12 +38,14 @@ public class WebServer {
      */
     public WebServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
-        addContext("/eval/", new HttpHandler() {
-            @Override
+        System.out.println("server created on port " + PORT);
+        server.createContext("/eval/", new HttpHandler() {
             public void handle(HttpExchange exchange) throws IOException {
+                System.out.println("GOT HERE");
                 createResponse(exchange);
             }
         });
+        server.start();
         this.environment = new Environment();
     }
     
@@ -49,28 +56,46 @@ public class WebServer {
     *  @throws IOException 
      */
     private void createResponse(HttpExchange exchange) throws IOException {
+        System.out.println("got here");
+        final String path = exchange.getRequestURI().getPath();
+        final String expression = path.substring(exchange.getHttpContext().getPath().length());
+        
+        String response;
         // Get recipients of list expression from this GET request
-        Set<Recipient> recipients = parseInput(exchange.getRequestBody());
-        // Create mailto and recipient lists for output
-        String mailToList = "";
-        String recipientList = "";
-        for (Recipient r : recipients) {
-            mailToList += r + MAIL_TO_DELIMITER;
-            recipientList += r + RECIPIENT_LIST_DELIMITER;
+        try {
+            Set<Recipient> recipients = parseInput(expression);
+            
+            // Create mailto and recipient lists for output
+            String mailToList = "";
+            String recipientList = "";
+            for (Recipient r : recipients) {
+                mailToList += r + MAIL_TO_DELIMITER;
+                recipientList += r + RECIPIENT_LIST_DELIMITER;
+            }
+            
+            // Remove trailing commas
+            mailToList = mailToList.substring(0, mailToList.length() - MAIL_TO_DELIMITER.length());
+            recipientList = recipientList.substring(0, recipientList.length() - RECIPIENT_LIST_DELIMITER.length());
+            System.out.println(mailToList);
+            
+            // Create mailto message
+            String mailToMessage = "<a href=\"mailto:" + mailToList + "\">email these recipients</a>";
+            // Create full response message
+            response = mailToMessage + LINE_BREAK + recipientList;
+            // Set exchange headers
+            exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
+            exchange.sendResponseHeaders(200, 0);
+            
+        } catch (IllegalArgumentException e) {
+            response = "<p>Invalid list expression (after http://localhost ... eval/). Please change to a valid list expression."
+                + "For valid list expressions, see specifications for Norn1 and Norn2.</p>";
         }
-        // Remove trailing commas
-        mailToList = mailToList.substring(0, mailToList.length() - MAIL_TO_DELIMITER.length());
-        recipientList = recipientList.substring(0, recipientList.length() - RECIPIENT_LIST_DELIMITER.length());
-        // Create mailto message
-        String mailToMessage = "<a href=\"mailto:" + mailToList + "\">email these recipients</a>";
-        // Create full response message
-        String response = mailToMessage + LINE_BREAK + recipientList;
-        // Set exchange headers
-        exchange.getResponseHeaders().add("Content-Type", "text/plain; charset=utf-8"); // TODO put type of response
-        exchange.sendResponseHeaders(200, 0);
+        
         // Write the message
+        System.out.println("writing message");
         PrintWriter out = new PrintWriter(exchange.getResponseBody(), true);
         out.println(response);
+        System.out.println("print response");
         out.close();
     }
     
@@ -82,10 +107,19 @@ public class WebServer {
      * @return Set<Recipient> representing recipients specified by evaluated list expression
      * @throws IOException 
      */
-    private Set<Recipient> parseInput(InputStream in) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        ListExpression parsed = ListExpression.parse(reader.readLine()); 
-        return parsed.recipients(environment); 
+//    private Set<Recipient> parseInput(InputStream in) throws IOException {
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+//        ListExpression parsed = ListExpression.parse(reader.readLine()); 
+//        return parsed.recipients(environment); 
+//    }
+    
+    private Set<Recipient> parseInput(String expression) {
+        try {
+            ListExpression parsed = ListExpression.parse(expression); 
+            return parsed.recipients(environment);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("invalid expression");
+        } 
     }
     
     /**
@@ -115,14 +149,4 @@ public class WebServer {
     public int port() {
         return PORT;
     }
-
-    /**
-     * Creates context mapping URIs to handlers.
-     * @param prefix of path
-     * @param handler of path HTTP information
-     */
-    public void addContext(String prefix, HttpHandler handler) {
-        server.createContext(prefix, handler);
-    }
-
 }

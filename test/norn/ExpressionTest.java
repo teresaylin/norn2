@@ -181,9 +181,11 @@ public class ExpressionTest {
     @Test   
     public void testRecipientValidCircularDefinition() { 
         final ListExpression testExpr = new Definition(new Name("a"), new Union(new Name("a"), CD));
+        // a = a, c@d
         
         final Environment oneEnvironment = new Environment();
         oneEnvironment.reassign(new Name("a"), AB); 
+        // a = a@b
         
         Set<ListExpression> aSet = new HashSet<>();
         aSet.add(new Recipient("a@b"));

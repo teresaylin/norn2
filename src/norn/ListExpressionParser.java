@@ -30,7 +30,6 @@ public class ListExpressionParser {
             // read the grammar as a file, relative to the project root.
             final File grammarFile = new File("src/norn/ListExpression.g");
             return Parser.compile(grammarFile, ListExpressionGrammar.ROOT);
-            
 
         // Parser.compile() throws two checked exceptions.
         // Translate these checked exceptions into unchecked RuntimeExceptions,
@@ -51,11 +50,13 @@ public class ListExpressionParser {
     public static ListExpression parse(final String string) throws UnableToParseException {
         // parse the example into a parse tree
         String lowercased = string.toLowerCase();
-        final ParseTree<ListExpressionGrammar> parseTree = parser.parse(lowercased);
-
-        // make an AST from the parse tree
-        final ListExpression expression = makeAbstractSyntaxTree(parseTree);
-        return expression;
+        try {
+            final ParseTree<ListExpressionGrammar> parseTree = parser.parse(lowercased);
+            final ListExpression expression = makeAbstractSyntaxTree(parseTree);
+            return expression;
+        } catch (UnableToParseException e) {
+            throw new UnableToParseException("unable to parse");
+        }
     }
     
     /**
