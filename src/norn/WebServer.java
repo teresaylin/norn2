@@ -67,7 +67,12 @@ public class WebServer {
             
             // Create mailto and recipient lists for output
             String mailToList = "";
-            String recipientList = "";
+            String recipientList;
+            if (recipients.size() == 0) {
+                recipientList = "{}";
+            } else {
+                recipientList = "";
+            }
             for (Recipient r : recipients) {
                 mailToList += r + MAIL_TO_DELIMITER;
                 recipientList += r + RECIPIENT_LIST_DELIMITER;
