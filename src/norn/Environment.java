@@ -82,6 +82,12 @@ public class Environment {
         return exp;
     }
     
+    /**
+     * Performs a DFS search on a listname to find its ListExpression dependencies.
+     * @param expression the expression assigned to the listname
+     * @param visited a set of ListExpressions in the listname's dependencies
+     * @return the set of ListExpressions in the listname's dependencies
+     */
     private Set<ListExpression> findDependencies(ListExpression expression, Set<ListExpression> visited) {
         List<ListExpression> children = expression.getChildren();
         if (children.size() != 0) {

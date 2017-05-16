@@ -46,6 +46,12 @@ public interface ListExpression {
     public Set<Recipient> recipients(Environment environment);
     
     
+    /**
+     * For the current ListExpression, get the list of ListExpressions that it depends on.
+     * If the current ListExpression does not depend on any ListExpressions, then an empty list
+     * is returned.
+     * @return the list of ListExpressions that make up a ListExpression
+     */
     public List<ListExpression> getChildren();
     
     
