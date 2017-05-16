@@ -29,15 +29,19 @@ public class EnvironmentTest {
      *  
      *  getNames()
      *      number of Names: 0, 1, >1
-     *      
+     *     
      *  
      */
+    
+    @Test(expected=AssertionError.class)
+    public void testAssertionsEnabled() {
+        assert false; // make sure assertions are enabled with VM argument: -ea
+    }
     
     // Recipients
     private final static Recipient AB = new Recipient("a@b");
     private final static Recipient CD = new Recipient("c@d");
     private final static Recipient SPECIAL = new Recipient("-_@b");
-
 
     // Testing getExpression...
     
@@ -65,6 +69,14 @@ public class EnvironmentTest {
         final Environment testEnv = new Environment();
         ListExpression expectedExpression = new Empty();
         assertEquals("expected correct empty list expression", expectedExpression, testEnv.getExpression(new Name("a")));
+    }
+    
+    // mail loop
+    @Test(expected=AssertionError.class)
+    public void testMailLoopDetection() {
+        final Environment testEnv = new Environment();
+        testEnv.reassign(new Name("a"), new Name("b"));
+        testEnv.reassign(new Name("b"), new Name("a"));
     }
     
     

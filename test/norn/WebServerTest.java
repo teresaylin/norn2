@@ -149,30 +149,35 @@ public class WebServerTest {
         final BufferedReader reader1 = new BufferedReader(new InputStreamReader(input1));
         assertEquals("<a href=\"mailto:\">email these recipients</a><br>{}", reader1.readLine());
         assertEquals("end of stream", null, reader1.readLine());
+        System.out.println("Processed input 1");
         
         // reading input2
         final InputStream input2 = url2.openStream();
         final BufferedReader reader2 = new BufferedReader(new InputStreamReader(input2));
         assertEquals("<a href=\"mailto:b@c,d@e\">email these recipients</a><br>b@c, d@e", reader2.readLine());
         assertEquals("end of stream", null, reader2.readLine());
+        System.out.println("Processed input 2");
         
         // reading input3
         final InputStream input3 = url3.openStream();
         final BufferedReader reader3 = new BufferedReader(new InputStreamReader(input3));
         assertEquals("<a href=\"mailto:x@y\">email these recipients</a><br>x@y", reader3.readLine());
         assertEquals("end of stream", null, reader3.readLine());
+        System.out.println("Processed input 3");
         
         // reading input4
         final InputStream input4 = url4.openStream();
         final BufferedReader reader4 = new BufferedReader(new InputStreamReader(input4));
         assertEquals("<a href=\"mailto:x@y\">email these recipients</a><br>x@y", reader4.readLine());
         assertEquals("end of stream", null, reader4.readLine());
+        System.out.println("Processed input 4");
         
         // reading input5
         final InputStream input5 = url5.openStream();
         final BufferedReader reader5 = new BufferedReader(new InputStreamReader(input5));
         assertEquals("<a href=\"mailto:\">email these recipients</a><br>{}", reader5.readLine());
         assertEquals("end of stream", null, reader5.readLine());
+        System.out.println("Processed input 5");
         
         // reading input6
         final InputStream input6 = url6.openStream();
@@ -180,6 +185,7 @@ public class WebServerTest {
         assertEquals("Mail loop encountered! This is not a valid list expression."
                     + " For valid list expressions, see specifications for Norn1 and Norn2.", reader6.readLine());
         assertEquals("end of stream", null, reader5.readLine());
+        System.out.println("Processed input 6");
 
         server.stop();
     }

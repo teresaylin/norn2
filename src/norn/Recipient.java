@@ -46,7 +46,7 @@ public class Recipient implements ListExpression {
     }
     
     @Override
-    public Set<ListExpression> getChildren() {
+    public Set<ListExpression> getChildren(Environment environment) {
         return Collections.emptySet();
     }
    

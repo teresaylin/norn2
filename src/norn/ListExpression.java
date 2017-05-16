@@ -48,9 +48,10 @@ public interface ListExpression {
      * For the current ListExpression, get the set of ListExpressions that it depends on.
      * If the current ListExpression does not depend on any ListExpressions, then an empty set
      * is returned.
+     * @param environment the environment to use to get children
      * @return the set of ListExpressions that make up a ListExpression
      */
-    public Set<ListExpression> getChildren();
+    public Set<ListExpression> getChildren(Environment environment);
     
     
     /**
