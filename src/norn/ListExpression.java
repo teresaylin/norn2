@@ -18,6 +18,7 @@ public interface ListExpression {
     //                  + Intersect(left: ListExpression, right: ListExpression)
     //                  + Sequence(left: ListExpression, right: ListExpression)
     //                  + Name(name: String)
+    //                  + Definition(name: Name, expression: ListExpression)
     
     /**
      * Parse an input according to the grammar in ListExpression.g.
