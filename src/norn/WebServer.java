@@ -92,7 +92,7 @@ public class WebServer {
      * @return current server environment of list names
      */
     public Environment getEnvironment(){
-        return new Environment();
+        return environment;     // TODO rep exposure? 
     }
     
     /**
