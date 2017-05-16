@@ -48,7 +48,7 @@ public class ExpressionParserTest {
 
     // T E S T I N G  p a r s e ( )
 
-    public final static Map<Name, ListExpression> EMPTY_ENVIRONMENT = new HashMap<>();
+    public final static Environment EMPTY_ENVIRONMENT = new Environment();
     private static final Set<String> emptySet = Collections.emptySet();
     
     // empty input, as defined by spec of Main.java
@@ -166,6 +166,25 @@ public class ExpressionParserTest {
         final ListExpression e = ListExpression.parse("* ");
         assertEquals(true,e.recipients(EMPTY_ENVIRONMENT).equals(emptySet));
     }
-
+    
+    // no comma separation
+    @Test
+    public void testIllegalSeparation() {
+        try {
+            final ListExpression expression = ListExpression.parse("a@b c@d");
+        } catch (AssertionError e) {
+            assertTrue("Expected human readable error message", e.getMessage().equals(ListExpressionParser.ILLEGAL_INPUT_MESSAGE));
+        }
+    }
+    
+    // email is invalid
+    @Test
+    public void testInvalidEmail() {
+        try {
+            final ListExpression expression = ListExpression.parse("username@");
+        } catch (AssertionError e) {
+            assertTrue("Expected human readable error message", e.getMessage().equals(ListExpressionParser.ILLEGAL_INPUT_MESSAGE));
+        }
+    }
 
 }

@@ -10,7 +10,7 @@ import lib6005.parser.Parser;
 import lib6005.parser.UnableToParseException;
 
 public class ListExpressionParser {
-    
+    public static final String ILLEGAL_INPUT_MESSAGE = "Illegal input; could not parse.";
     // Expression grammar nonterminals
     private enum ListExpressionGrammar {
         ROOT, SEQUENCE, DEFINITION, UNION, DIFFERENCE, INTERSECTION, PRIMARY, ADDRESS, WHITESPACE, LISTNAME
@@ -145,7 +145,7 @@ public class ListExpressionParser {
         }
         
         default:
-            throw new AssertionError("should never get here");
+            throw new AssertionError(ILLEGAL_INPUT_MESSAGE);
         }
 
     }

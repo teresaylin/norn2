@@ -67,7 +67,7 @@ public class Environment {
      * @return a set containing all names in this environment
      */
     public Set<Name> getNames() {
-        // TODO implement
+        return definitions.keySet();
     }
     
     /**
