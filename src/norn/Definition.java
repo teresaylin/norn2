@@ -58,7 +58,7 @@ public class Definition implements ListExpression {
     public boolean equals(Object obj) {
         if (!(obj instanceof Definition)) { return false; }
         Definition that = (Definition) obj;
-        return this.name.equals(that.name) && this.expression.equals(that.name);
+        return this.name.equals(that.name) && this.expression.equals(that.expression);
     }
     
     @Override
