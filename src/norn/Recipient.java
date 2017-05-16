@@ -1,5 +1,6 @@
 package norn;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,15 +37,13 @@ public class Recipient implements ListExpression {
     private void checkRep() {
         assert emailAddress != null;
         assert emailAddress.length() > 0;
-        assert emailAddress.contains("@");
+        assert emailAddress.equals(emailAddress.toLowerCase());
+        assert emailAddress.matches("[A-Za-z0-9_.-]+@[A-Za-z0-9_.-]+");
     }
     
     @Override
     public Set<Recipient> recipients(Environment environment) {
-        throw new UnsupportedOperationException("Implement me!");
-//        Set<Recipient> recipients = new HashSet<>();
-//        recipients.add(this); // TODO modify to use environment
-//        return recipients;
+        return new HashSet<Recipient>(Arrays.asList(this));
     }
    
     /**

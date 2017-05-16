@@ -39,15 +39,14 @@ public class Intersect implements ListExpression {
 
     @Override
     public Set<Recipient> recipients(Environment environment) {
-        throw new UnsupportedOperationException("Implement me!");
-//        Set<Recipient> intersection = new HashSet<>();
-//        Set<Recipient> rightRecipients = right.recipients(environment);
-//        for (Recipient l : left.recipients(environment)) {
-//            if (rightRecipients.contains(l)) {
-//                intersection.add(l);
-//            }
-//        }
-//        return intersection;
+        Set<Recipient> intersection = new HashSet<>();
+        Set<Recipient> rightRecipients = right.recipients(environment);
+        for (Recipient l : left.recipients(environment)) {
+            if (rightRecipients.contains(l)) {
+                intersection.add(l);
+            }
+        }
+        return intersection;
     }
 
     /**

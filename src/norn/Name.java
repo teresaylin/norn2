@@ -1,7 +1,5 @@
 package norn;
 
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,7 +29,7 @@ public class Name implements ListExpression {
      */
     private void checkRep() {
         assert name != null;
-        // TODO check the rest of the rep invariant.
+        assert name.matches("[A-Za-z0-9_.-]+");
     }
     
     @Override

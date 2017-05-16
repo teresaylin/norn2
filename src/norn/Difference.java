@@ -40,15 +40,14 @@ public class Difference implements ListExpression {
     
     @Override
     public Set<Recipient> recipients(Environment environment) {
-        throw new UnsupportedOperationException("Implement me!");
-//        Set<Recipient> difference = new HashSet<>();
-//        Set<Recipient> rightRecipients = right.recipients(environment);
-//        for (Recipient l : left.recipients(environment)) {
-//            if (!(rightRecipients.contains(l))) {
-//                difference.add(l);
-//            }
-//        }
-//        return difference;
+        Set<Recipient> difference = new HashSet<>();
+        Set<Recipient> rightRecipients = right.recipients(environment);
+        for (Recipient l : left.recipients(environment)) {
+            if (!(rightRecipients.contains(l))) {
+                difference.add(l);
+            }
+        }
+        return difference;
     }
 
     /**

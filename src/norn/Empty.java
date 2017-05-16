@@ -18,8 +18,7 @@ public class Empty implements ListExpression {
     
     @Override
     public Set<Recipient> recipients(Environment environment) {
-        throw new UnsupportedOperationException("Implement me!");
-//        return Collections.emptySet();
+        return Collections.emptySet();
     }
 
     /**

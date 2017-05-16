@@ -33,8 +33,8 @@ public class Definition implements ListExpression {
     
     @Override
     public Set<Recipient> recipients(Environment environment) {
-        // TODO Auto-generated method stub
-        return null;
+        environment.reassign(name, expression);
+        return expression.recipients(environment);
     }
 
     /*
