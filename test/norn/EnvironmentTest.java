@@ -111,12 +111,10 @@ public class EnvironmentTest {
     
 ///////////////////////////////////////////////////////////////////////////
     // Testing mail loops
-//    @Test(expected=AssertionError.class)
+    
+    // Covers > 2-element loop
+    @Test(expected=AssertionError.class)
     public void testMailLoop() {
-        // a = a, b
-        // b = c
-        // c = d
-        // d = a
         final Environment testEnv = new Environment();
         testEnv.reassign(new Name("a"), new Name("b"));
         testEnv.reassign(new Name("b"), new Name("c"));
@@ -124,11 +122,21 @@ public class EnvironmentTest {
         testEnv.reassign(new Name("d"), new Name("a"));
     }
     
+    // Covers 2-element loop
     @Test(expected=AssertionError.class)
     public void testMailLoopAB() {
         final Environment testEnv = new Environment();
         testEnv.reassign(new Name("a"), new Name("b"));
         testEnv.reassign(new Name("b"), new Name("a"));
+    }
+    
+    // Covers definition in terms of self; should be allowed
+    public void testSelfLoop() {
+        final Environment testEnv = new Environment();
+        testEnv.reassign(new Name("a"), new Recipient("a@c"));
+        testEnv.reassign(new Name("a"), new Union(new Name("a"), new Recipient("b@c")));
+        final Set<ListExpression> expectedRecipients = new HashSet<>(Arrays.asList(new Recipient("a@c"), new Recipient("b@c")));
+        assertEquals("Expected a to have 2 recipients", expectedRecipients, testEnv.getExpression(new Name("a")).recipients(testEnv));
     }
     
 }
