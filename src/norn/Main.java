@@ -1,15 +1,14 @@
 package norn;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.Set;
+
 import lib6005.parser.UnableToParseException;
 
 /** 
@@ -127,8 +126,10 @@ import lib6005.parser.UnableToParseException;
  *      a = c --> [error message]
  */
 
-// Thread safety argument: TODO
-
+/* Thread safety argument: The only shared mutable data is the environment, which is 
+ * thread safe, and all accesses to environment are protected by a lock on the object,
+ * both inside Main and in any other class that handles environment.
+ */
 public class Main {
     public static final String EMPTY_LIST = "{}";
     private static final String LOAD_COMMAND = "!load";
@@ -175,7 +176,10 @@ public class Main {
                     
                 } else {
                     // handle all list expressions
-                    Set<Recipient> parsed = ListExpression.parse(input).recipients(environment); 
+                    Set<Recipient> parsed;
+                    synchronized (environment) {
+                        parsed = ListExpression.parse(input).recipients(environment); 
+                    }
                     System.out.println(parsed.toString().replaceAll("[\\[\\]]", ""));
                 }
             } catch(IllegalArgumentException e){

@@ -13,7 +13,7 @@ public class Definition implements ListExpression {
     private final ListExpression expression;
     
     // AF(name, expression) = a set of email addresses defined by expression named name
-    // RI: expression does not result in mutually recursive definition of name.
+    // RI: true
     // Rep exposure: all fields are private and final.
     
     /**
@@ -31,13 +31,17 @@ public class Definition implements ListExpression {
      * Checks that rep invariant has been maintained.
      */
     private void checkRep() {
-        //TODO how to check for recursion ?
+        assert name != null;
+        assert expression != null;
     }
     
     @Override
     public Set<Recipient> recipients(Environment environment) {
-        Set<Recipient> oldRecipients = expression.recipients(environment);
-        environment.reassign(name, expression);
+        Set<Recipient> oldRecipients;
+        synchronized (environment) {
+            oldRecipients = expression.recipients(environment);
+            environment.reassign(name, expression);
+        }
         return oldRecipients;
     }
     

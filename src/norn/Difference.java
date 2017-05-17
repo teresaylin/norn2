@@ -12,13 +12,13 @@ import java.util.Set;
 public class Difference implements ListExpression {
     private final ListExpression left;
     private final ListExpression right;
-    
+
     // AF(left, right) = the set of all elements in the set defined by left
     //                   that are not in the set defined by right
     // Rep invariant: true
     // Rep safety: all fields are private, final, and immutable. All 
     // references to any returned mutable objects are discarded.
-    
+
     /**
      * Create a new Difference object
      * @param left the left ListExpression of this Difference
@@ -29,7 +29,7 @@ public class Difference implements ListExpression {
         this.right = right;
         checkRep();
     }
-    
+
     /**
      * Check that the representation invariant is maintained.
      */
@@ -37,24 +37,26 @@ public class Difference implements ListExpression {
         assert left != null;
         assert right != null;
     }
-    
+
     @Override
     public Set<Recipient> recipients(Environment environment) {
         Set<Recipient> difference = new HashSet<>();
-        Set<Recipient> rightRecipients = right.recipients(environment);
-        for (Recipient l : left.recipients(environment)) {
-            if (!(rightRecipients.contains(l))) {
-                difference.add(l);
+        synchronized (environment) {
+            Set<Recipient> rightRecipients = right.recipients(environment);
+            for (Recipient l : left.recipients(environment)) {
+                if (!(rightRecipients.contains(l))) {
+                    difference.add(l);
+                }
             }
         }
         return difference;
     }
-    
+
     @Override
     public Set<ListExpression> getChildren() {
         return new HashSet<>(Arrays.asList(left, right));
     }
-    
+
     @Override
     public Set<ListExpression> getDependents(Environment environment) {
         return Collections.emptySet();
@@ -68,14 +70,14 @@ public class Difference implements ListExpression {
     public String toString() {
         return "(" + left.toString() + " ! " + right.toString() + ")";
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Difference)) return false;
         Difference that = (Difference) obj;
         return left.equals(that.left) && right.equals(that.right);
     }
-    
+
     @Override
     public int hashCode() {
         return left.hashCode() - right.hashCode();

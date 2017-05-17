@@ -20,7 +20,8 @@ public class Environment {
     // RI: there are no mail loops (mutually recursive list definitions).
     // Rep exposure: the definitions map is private, final, and never returned through any of the methods.
     // Thread safety: definitions is a synchronized map, which means that any actions to modify it are atomic.
-    //                Any methods that mutate definitions are therefore threadsafe.
+    //                Additionally, all public methods are synchronized, so any multi-step modification
+    //                to definitions is atomic as well. 
     
     /**
      * Create a new Environment.
@@ -34,15 +35,17 @@ public class Environment {
      * Checks that representation invariant is maintained.
      */
     private void checkRep() {
-        assert definitions != null;
-        for (Name name : definitions.keySet()) {
-            ListExpression expression = definitions.get(name);
-            Set<ListExpression> visited = new HashSet<>(Arrays.asList(name));
-            Set<ListExpression> flattened = flatten(expression, new HashSet<>());
-            if (flattened.contains(name)) flattened.remove(name);
-            boolean hasLoop = findCycle(flattened, visited);
-
-            assert !hasLoop : "Oops! You have created a mail loop.";
+        synchronized (definitions) {
+            assert definitions != null;
+            for (Name name : definitions.keySet()) {
+                ListExpression expression = definitions.get(name);
+                Set<ListExpression> visited = new HashSet<>(Arrays.asList(name));
+                Set<ListExpression> flattened = flatten(expression, new HashSet<>());
+                if (flattened.contains(name)) flattened.remove(name);
+                boolean hasLoop = findCycle(flattened, visited);
+    
+                assert !hasLoop : "Oops! You have created a mail loop.";
+            }
         }
     }
     
@@ -94,7 +97,7 @@ public class Environment {
      * @return the corresponding expression in definitions if one exists;
      *  returns empty expression otherwise (i.e., name has not been defined).
      */
-    public ListExpression getExpression(Name name) {
+    public synchronized ListExpression getExpression(Name name) {
         if (definitions.containsKey(name)) {
             return definitions.get(name);
         }
@@ -117,7 +120,7 @@ public class Environment {
      * @param expression the expression to link to name
      * @return the previous expression linked to this name (empty if none).
      */
-    public ListExpression reassign(Name name, ListExpression expression) {
+    public synchronized ListExpression reassign(Name name, ListExpression expression) {
         ListExpression exp = getExpression(name);
         definitions.put(name, expression);
         checkRep();

@@ -39,8 +39,10 @@ public class Sequence implements ListExpression {
 
     @Override
     public Set<Recipient> recipients(Environment environment) {
-        left.recipients(environment);
-        return right.recipients(environment);
+        synchronized (environment) {
+            left.recipients(environment);
+            return right.recipients(environment);
+        }
     }
     
     @Override

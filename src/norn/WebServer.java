@@ -1,22 +1,13 @@
 package norn;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
-import java.util.Collections;
-import java.util.Random;
 import java.util.Set;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-
-import lib6005.parser.UnableToParseException;
 
 /**
  * Server to handle web client requests to ListExpression system.
@@ -36,8 +27,8 @@ public class WebServer {
     // Protection from rep exposure: all mutable fields are private and final, and PORT is final
     //                               HTTP message-passing only with web clients
     //                               environment passed to backend methods that does not expose to client
-    // Thread safety argument: environment is only changed mutable structure
-    //                         all accesses and mutations to environment must acquire lock to environment object
+    // Thread safety argument: environment is the only shared mutable structure
+    //                         all accesses and mutations to environment acquire lock on the environment object.
     //
     
     
@@ -65,7 +56,6 @@ public class WebServer {
     *  @throws IOException 
      */
     private void createResponse(HttpExchange exchange) throws IOException {
-        System.out.println("got here");
         final String path = exchange.getRequestURI().getPath();
         final String expression = path.substring(exchange.getHttpContext().getPath().length());
         
@@ -73,8 +63,6 @@ public class WebServer {
         // Get recipients of list expression from this GET request
         try {
             Set<Recipient> recipients = parseInput(expression);
-            System.out.println("found recipients");
-            System.out.println(recipients);
             // Create mailto and recipient lists for output
             String mailToList = "";
             String recipientList;
@@ -91,9 +79,6 @@ public class WebServer {
                 recipientList = recipientList.substring(0, recipientList.length() - RECIPIENT_LIST_DELIMITER.length());
                 
             }
-            
-            System.out.println(mailToList);
-            
             // Create mailto message
             String mailToMessage = "<a href=\"mailto:" + mailToList + "\">email these recipients</a>";
             // Create full response message
@@ -102,15 +87,12 @@ public class WebServer {
             response = "<p>Invalid list expression (after http://localhost ... eval/). Please change to a valid list expression."
                 + " For valid list expressions, see specifications for Norn1 and Norn2.</p>";
         }
-        
         // Set exchange headers
         exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
         exchange.sendResponseHeaders(200, 0);
         // Write the message
-        System.out.println("writing message");
         PrintWriter out = new PrintWriter(exchange.getResponseBody(), true);
         out.println(response);
-        System.out.println("print response" + response);
         out.close();
     }
     
@@ -120,21 +102,15 @@ public class WebServer {
      *  in contains list-expression is a list expression as defined in Norn2, 
      *  but with all whitespace omitted.
      * @return Set<Recipient> representing recipients specified by evaluated list expression
-     * @throws IOException 
+     * @throws IllegalArgumentException 
      */
-//    private Set<Recipient> parseInput(InputStream in) throws IOException {
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//        ListExpression parsed = ListExpression.parse(reader.readLine()); 
-//        return parsed.recipients(environment); 
-//    }
-    
     private Set<Recipient> parseInput(String expression) {
-        try {
-            ListExpression parsed = ListExpression.parse(expression);
-            return parsed.recipients(environment);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("invalid expression");
-        } 
+        ListExpression parsed = ListExpression.parse(expression);
+        Set<Recipient> recipients;
+        synchronized (environment) {
+            recipients = parsed.recipients(environment);
+        }
+        return recipients;
     }
     
     /**
