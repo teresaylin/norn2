@@ -53,7 +53,7 @@ import lib6005.parser.UnableToParseException;
  */
 
 /*
- * T E S T S
+ * T E S T S -- Please restart console after each individual test!!!
  * 
  * L O A D
  * test loading dependent list definitions
@@ -75,21 +75,19 @@ import lib6005.parser.UnableToParseException;
  *      
  * S A V E
  * test 0 list definitions previously entered
- *      !save savetests/savetest1 --> \n
+ *      !save savetest1 --> \n
  *      [savetest1 should be an empty file]
  * test 1 list definition previously entered
  *      dogs = corgi@dog.com, poodle@dog.com, wolf@dog.com --> corgi@dog.com, poodle@dog.com, wolf@dog.com
- *      !save savetests/savetest2 --> \n
- *      [savetest2 should contain only one line with text: dogs = corgi@dog.com, poodle@dog.com, wolf@dog.com]
+ *      !save savetest2 --> \n
+ *      [savetest2 should contain only one line with text: dogs = (((corgi@dog.com, poodle@dog.com), wolf@dog.com));]
  * test > 1 list definitions previously entered
  *      gryffindor = harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts --> harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
  *      quidditch = harry@hogwarts, ron@hogwarts, draco@hogwarts, cedric@hogwarts --> harry@hogwarts, ron@hogwarts, draco@hogwarts, cedric@hogwarts
  *      sportsfans = gryffindor ! quidditch
- *      !save savetests/savetest3
- *      [savetest3 should contain 3 lines:
- *          gryffindor = harry@hogwarts, hermione@hogwarts, ron@hogwarts, neville@hogwarts
- *          quidditch = harry@hogwarts, ron@hogwarts, draco@hogwarts, cedric@hogwarts
- *          sportsfans = hermione@hogwarts, neville@hogwarts]
+ *      !save savetest3
+ *      [savetest3 should contain 1 line:
+ *          ((((harry@hogwarts, ron@hogwarts), draco@hogwarts), cedric@hogwarts)); sportsfans = ((gryffindor ! quidditch)); gryffindor = ((((harry@hogwarts, hermione@hogwarts), ron@hogwarts), neville@hogwarts));]
  * test saving to a file that cannot be opened for writing --> print human readable error message
  *      !save loadtests/savetest4 --> [error message; loadtests does not exist]
  *          
@@ -134,6 +132,7 @@ public class Main {
     public static final String EMPTY_LIST = "{}";
     private static final String LOAD_COMMAND = "!load";
     private static final String SAVE_COMMAND = "!save";
+    private static final String DIRECTORY = "src/norn/";
 
     /**
      * Reads expressions as command inputs from the console and outputs results
@@ -162,7 +161,7 @@ public class Main {
                 if (input.startsWith(LOAD_COMMAND)) {
                     String[] fileNames = input.substring(prefixLength).replaceAll("\\s", "").split(",");
                     for(String fileName : fileNames){
-                        File loadFile = new File("src/norn/" + fileName);
+                        File loadFile = new File(DIRECTORY + fileName);
                         if ( ! loadFile.isFile()){
                             throw new IllegalArgumentException("file not found: \"" + loadFile + "\"");
                         }
@@ -196,7 +195,7 @@ public class Main {
     private static boolean save(String filename, Environment env) {
         synchronized(env){
             try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+                BufferedWriter writer = new BufferedWriter(new FileWriter(DIRECTORY + filename));
                 Set<Name> names = env.getNames();
                 for (Name n : names) {
                     writer.write(n.toString() + " = (" + env.getExpression(n).toString() + ")"); 
