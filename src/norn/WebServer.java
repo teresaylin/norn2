@@ -29,7 +29,17 @@ public class WebServer {
     private static final String RECIPIENT_LIST_DELIMITER = ", ";
     private static final String LINE_BREAK = "<br>";
     
-    // TODO write AF, RI, Rep exposure
+    // AF(PORT, server, environment) = a web server connected to HTTP server server
+    //                                 that accepts connections at port number PORT
+    //                                 and maintains list name definitions in environment
+    // RI: true
+    // Protection from rep exposure: all mutable fields are private and final, and PORT is final
+    //                               HTTP message-passing only with web clients
+    //                               environment passed to backend methods that does not expose to client
+    // Thread safety argument: environment is only changed mutable structure
+    //                         all accesses and mutations to environment must acquire lock to environment object
+    //
+    
     
     /**
      * Creates an HTTP server to connect with web clients.
@@ -131,7 +141,7 @@ public class WebServer {
      * @return current server environment of list names
      */
     public Environment getEnvironment(){
-        return environment;     // TODO rep exposure? 
+        return environment;     
     }
     
     /**
