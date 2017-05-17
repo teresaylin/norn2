@@ -47,7 +47,7 @@ import lib6005.parser.UnableToParseException;
  * separate the files by a comma.
  * 
  * If a filename does not contain a valid list expression (during loading), or the file is 
- * unreadable (during saving), then 
+ * unreadable (during saving), then a readable error is returned.
  *
  * If given no input, this console proceeds to wait until valid input is given.
  */
