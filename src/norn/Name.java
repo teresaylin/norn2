@@ -38,6 +38,9 @@ public class Name implements ListExpression {
     @Override
     public Set<Recipient> recipients(Environment environment) {
         ListExpression expr = environment.getExpression(this);
+        if (this.equals(expr)) {
+            return Collections.emptySet();
+        }
         return expr.recipients(environment);
     }
     
@@ -48,7 +51,9 @@ public class Name implements ListExpression {
     
     @Override
     public Set<ListExpression> getDependents(Environment environment) {
-        return new HashSet<ListExpression>(Arrays.asList(environment.getExpression(this)));
+        if (environment.getNames().contains(this))
+            return new HashSet<ListExpression>(Arrays.asList(environment.getExpression(this)));
+        return Collections.emptySet();
     }
     
     /**

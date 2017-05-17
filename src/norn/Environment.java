@@ -1,7 +1,5 @@
 package norn;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,24 +36,23 @@ public class Environment {
     private void checkRep() {
         assert definitions != null;
         for (Name name : definitions.keySet()) {
-//            System.out.println("checking key: " + name.toString());
-            // for each name in definitions, run DFS on each child node, keep track of nodes visited
             ListExpression expression = definitions.get(name);
-            Set<ListExpression> visited = new HashSet<>();
-            // expression's children minus those that match name PLUS dependents
-            // a = a, b@c children: {a, b@c}; minuschildren = {b@c}; minuschildrenandtheirdependents = {b@c}
-            // a = a, b@c, c@d 
-            // Union(a, Union(b@c, c@d))
+            Set<ListExpression> visited = new HashSet<>(Arrays.asList(name));
             Set<ListExpression> flattened = flatten(expression, new HashSet<>());
             if (flattened.contains(name)) flattened.remove(name);
-            Set<ListExpression> finalVisited = findDependencies(name, flattened, visited);
-//            System.out.println("finalVisited: " + finalVisited);
+            boolean hasLoop = findCycle(flattened, visited);
 
-            assert !finalVisited.contains(name) : name.toString() + " has a mail loop in its definition! Please reassign " + name.toString();
+            assert !hasLoop : "Oops! You have created a mail loop.";
         }
-//        System.out.println(definitions);
     }
     
+    /**
+     * Returns a flattened set of elements in the specified ListExpression (no element
+     * in the returned set has children). 
+     * @param e the expression to flatten
+     * @param elements the set of elements to add to
+     * @return the set of elements in e
+     */
     public Set<ListExpression> flatten(ListExpression e, Set<ListExpression> elements) {
         if (e.getChildren().isEmpty()) {
             return new HashSet<>(Arrays.asList(e));
@@ -64,6 +61,31 @@ public class Environment {
             elements = flatten(c, elements);
         }
         return elements;
+    }
+    
+    /**
+     * Detects mail loops (mutually recursive definitions) in the current state of the environment.
+     * A definition that includes its own name is not necessarily mutually recursive (e.g. a=a should
+     * return false). 
+     * @param toVisit the Set of ListExpressions to examine
+     * @param visited the Set of ListExpressions that have already been examined
+     * @return true if there is a mail loop; false otherwise
+     */
+    private boolean findCycle(Set<ListExpression> toVisit, Set<ListExpression> visited) {
+        boolean cycle = false;
+        for (ListExpression c : toVisit) {
+            if (visited.contains(c)) {
+                return true;
+            } else {
+                visited.add(c);
+                Set<ListExpression> children = new HashSet<>(c.getChildren());
+                for (ListExpression d : c.getDependents(this)) {
+                    children.add(d);
+                }
+                cycle = cycle || findCycle(children, visited);
+            }
+        }
+        return cycle;
     }
     
     /**
@@ -102,25 +124,4 @@ public class Environment {
         return exp;
     }
 
-    /**
-     * Performs a DFS search on a listname to find its ListExpression dependencies.
-     * @param name the listname to perform the DFS search on
-     * @param expression the expression assigned to the listname
-     * @param visited a set of ListExpressions in the listname's dependencies
-     * @return the set of ListExpressions in the listname's dependencies
-     */
-    private Set<ListExpression> findDependencies(Name name, Set<ListExpression> children, Set<ListExpression> visited) {
-        //Set<ListExpression> children = expression.getChildren();
-//        System.out.println("children of " + expression.toString() + ": " + children);
-//        System.out.println("how many children: " + children.size());
-        if (children.size() != 0) {
-//            System.out.println("has children!");
-            visited.addAll(children);
-            for (ListExpression child : children) {
-                if (child.equals(name)) { break; }
-                visited = findDependencies(name, child.getChildren(), visited);
-            }
-        }
-        return visited;
-    }
 }
