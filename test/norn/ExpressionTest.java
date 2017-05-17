@@ -51,10 +51,16 @@ public class ExpressionTest {
      *      listname defined with itself
      *      sequence within another variant
      *  
-     *  getChildren()
+     *  getChildren():
      *      duplicate children
      *      nesting in expression
      *      each concrete variant class
+     *      
+     *  getDependents(environment):
+     *      Name:
+     *          Name obj is not in environment
+     *          Name obj is in environment
+     *      all other variant classes
      *      
      *  toString():
      *      case - lower, upper
@@ -370,6 +376,74 @@ public class ExpressionTest {
     public void testChildrenDifference() {
         Set<ListExpression> children = new HashSet<>(Arrays.asList(new Union(new Union(AB, SPECIAL), new Name("a")), new Name("b")));
         assertEquals("expected correct children of difference/union", children, TWO_EVAL.getChildren());
+    }
+
+    
+///////////////////////////////////////////////////////////////////////////////////////////////////
+    // getDependents(environment)
+
+    // Empty
+    @Test
+    public void testDependentsEmpty() {
+        Environment env = new Environment();
+        assertEquals("expected empty set of dependents of Empty", Collections.emptySet(), new Empty().getDependents(env));
+    }
+    
+    // Recipient
+    @Test
+    public void testDependentsRecipient() {
+        Environment env = new Environment();
+        assertEquals("expected empty set of dependents of Recipient", Collections.emptySet(), AB.getDependents(env));
+    }
+    
+    // Definition
+    @Test
+    public void testDependentsDefinition() {
+        Environment env = new Environment();
+        assertEquals("expected empty set of dependents of Definition", Collections.emptySet(), ASSIGN_EVAL.getDependents(env));
+    }
+    
+    // Difference
+    @Test
+    public void testDependentsDifference() {
+        Environment env = new Environment();
+        assertEquals("expected empty set of dependents of Difference", Collections.emptySet(), TWO_EVAL.getDependents(env));
+    }
+    
+    // Union
+    @Test
+    public void testDependentsUnion() {
+        Environment env = new Environment();
+        assertEquals("expected empty set of dependents of Difference", Collections.emptySet(), SEQ_WITHIN.getDependents(env));
+    }
+    
+    // Intersect
+    @Test
+    public void testDependentsIntersect() {
+        Environment env = new Environment();
+        assertEquals("expected empty set of dependents of Difference", Collections.emptySet(), ONE_EVAL.getDependents(env));
+    }
+    
+    // Sequence
+    @Test
+    public void testDependentsSequence() {
+        Environment env = new Environment();
+        assertEquals("expected empty set of dependents of Difference", Collections.emptySet(), SEQ_EVAL.getDependents(env));
+    }
+    
+    // Name, where the Name obj is not in environment
+    @Test
+    public void testDependentsNameNotInEnv() {
+        Environment env = new Environment();
+        assertEquals("expected empty set of dependents of Difference", Collections.emptySet(), new Name("a").getDependents(env));
+    }
+    
+    // Name, where the Name obj is in the environment
+    @Test
+    public void testDependentsNameInEnv() {
+        Environment env = new Environment();
+        env.reassign(new Name("a"), new Name("b"));
+        assertEquals("expected empty set of dependents of Difference", new HashSet<ListExpression>(Arrays.asList(new Name("b"))), new Name("a").getDependents(env));
     }
     
     
