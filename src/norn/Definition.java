@@ -37,7 +37,6 @@ public class Definition implements ListExpression {
     @Override
     public Set<Recipient> recipients(Environment environment) {
         Set<Recipient> oldRecipients = expression.recipients(environment);
-        System.out.println("DEFINITION " + oldRecipients);
         environment.reassign(name, expression);
         return oldRecipients;
     }

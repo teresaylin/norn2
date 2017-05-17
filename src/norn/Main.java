@@ -175,14 +175,7 @@ public class Main {
                     
                 } else {
                     // handle all list expressions
-                    ListExpression e = ListExpression.parse(input);
                     Set<Recipient> parsed = ListExpression.parse(input).recipients(environment); 
-                    
-                    System.out.println("---------------------------");
-                    Set<ListExpression> flattened = environment.flatten(e, new HashSet<ListExpression>());
-                    System.out.println(flattened);
-                    System.out.println("---------------------------");
-                    
                     System.out.println(parsed.toString().replaceAll("[\\[\\]]", ""));
                 }
             } catch(IllegalArgumentException e){

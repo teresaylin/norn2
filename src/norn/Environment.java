@@ -53,7 +53,7 @@ public class Environment {
      * @param elements the set of elements to add to
      * @return the set of elements in e
      */
-    public Set<ListExpression> flatten(ListExpression e, Set<ListExpression> elements) {
+    private Set<ListExpression> flatten(ListExpression e, Set<ListExpression> elements) {
         if (e.getChildren().isEmpty()) {
             return new HashSet<>(Arrays.asList(e));
         }
