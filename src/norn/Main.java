@@ -67,7 +67,7 @@ import lib6005.parser.UnableToParseException;
  *      !load loadtest2 --> \n
  *      petdogs --> corgi@dog.com, poodle@dog.com
  * test loading multiple files
- *      !load loadtest1 loadtest3 --> \n
+ *      !load loadtest1, loadtest3 --> \n
  *      lunch --> brie@whole.wheat, crouton@tomato.bisque
  *      dinner --> roast@lamb.mint, german@chocolate.cake
  * test loading files with invalid list expressions --> print human readable error message
@@ -162,9 +162,8 @@ public class Main {
                 if (input.startsWith(LOAD_COMMAND)) {
                     String[] fileNames = input.substring(prefixLength).replaceAll("\\s", "").split(",");
                     for(String fileName : fileNames){
-                        File loadFile = new File(fileName);
+                        File loadFile = new File("src/norn/" + fileName);
                         if ( ! loadFile.isFile()){
-                            System.out.println("here");
                             throw new IllegalArgumentException("file not found: \"" + loadFile + "\"");
                         }
                         load(loadFile, server.getEnvironment());
@@ -183,7 +182,7 @@ public class Main {
                     System.out.println(parsed.toString().replaceAll("[\\[\\]]", ""));
                 }
             } catch(IllegalArgumentException e){
-                System.out.println("expression unable to be parsed");
+                System.out.println(e);
             }
         }
     }
