@@ -38,10 +38,8 @@ public class WebServer {
      */
     public WebServer(Environment environment) throws IOException {
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
-        System.out.println("server created on port " + PORT);
         server.createContext("/eval/", new HttpHandler() {
             public void handle(HttpExchange exchange) throws IOException {
-                System.out.println("GOT HERE");
                 createResponse(exchange);
             }
         });
@@ -86,6 +84,9 @@ public class WebServer {
         } catch (IllegalArgumentException e) {
             response = "<p>Invalid list expression (after http://localhost ... eval/). Please change to a valid list expression."
                 + " For valid list expressions, see specifications for Norn1 and Norn2.</p>";
+        } catch (AssertionError e) {
+            response = "<p>Oops! You created a mail loop. Mutually recursive definitions are not allowed."
+                    + " For valid list expressions, see specifications for Norn1 and Norn2.</p>";
         }
         // Set exchange headers
         exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");

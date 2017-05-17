@@ -207,7 +207,7 @@ public class Main {
                 writer.close();
                 return true;
             } catch (IOException e) {
-                System.out.println("Could not open file to writer: " + e.getMessage());
+                System.out.println("Could not open file to write: " + e.getMessage());
             }
             return false;
         }
