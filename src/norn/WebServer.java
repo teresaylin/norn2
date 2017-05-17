@@ -35,7 +35,7 @@ public class WebServer {
      * Creates an HTTP server to connect with web clients.
      * @throws IOException
      */
-    public WebServer() throws IOException {
+    public WebServer(Environment environment) throws IOException {
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
         System.out.println("server created on port " + PORT);
         server.createContext("/eval/", new HttpHandler() {
@@ -45,7 +45,7 @@ public class WebServer {
             }
         });
         server.start();
-        this.environment = new Environment();
+        this.environment = environment;
     }
     
     /**

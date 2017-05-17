@@ -21,7 +21,12 @@ public class Empty implements ListExpression {
     }
     
     @Override
-    public Set<ListExpression> getChildren(Environment environment) {
+    public Set<ListExpression> getChildren() {
+        return Collections.emptySet();
+    }
+    
+    @Override
+    public Set<ListExpression> getDependents(Environment environment) {
         return Collections.emptySet();
     }
 

@@ -1,6 +1,7 @@
 package norn;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,8 +50,13 @@ public class Intersect implements ListExpression {
     }
     
     @Override
-    public Set<ListExpression> getChildren(Environment environment) {
+    public Set<ListExpression> getChildren() {
         return new HashSet<>(Arrays.asList(left, right));
+    }
+    
+    @Override
+    public Set<ListExpression> getDependents(Environment environment) {
+        return Collections.emptySet();
     }
 
     /**

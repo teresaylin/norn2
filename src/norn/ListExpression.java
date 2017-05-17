@@ -51,8 +51,10 @@ public interface ListExpression {
      * @param environment the environment to use to get children
      * @return the set of ListExpressions that make up a ListExpression
      */
-    public Set<ListExpression> getChildren(Environment environment);
+    public Set<ListExpression> getChildren();
     
+    
+    public Set<ListExpression> getDependents(Environment environment);
     
     /**
      * @return a parsable representation of this listexpression, such that

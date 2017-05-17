@@ -48,7 +48,7 @@ public class WebServerTest {
     // tests valid GET request, 1 web user
     @Test
     public void testValid() throws IOException {
-        final WebServer server = new WebServer();
+        final WebServer server = new WebServer(new Environment());
         final String valid = "http://localhost:" + server.port() + "/eval/tlin15@mit.edu";
         URL url;
         // in case request contains non-ASCII characters
@@ -70,7 +70,7 @@ public class WebServerTest {
     // tests invalid GET request (invalid expression after port)
     @Test
     public void testInvalid() throws IOException {
-        final WebServer server = new WebServer();
+        final WebServer server = new WebServer(new Environment());
         final String invalid = "http://localhost:" + server.port() + "/???/!!!";
         URL url;
         // in case request contains non-ASCII characters
@@ -93,7 +93,7 @@ public class WebServerTest {
     // tests invalid GET request (invalid list expression)
     @Test
     public void testEvalInvalidListExpression() throws IOException {
-        final WebServer server = new WebServer();
+        final WebServer server = new WebServer(new Environment());
 
         final String invalid = "http://localhost:" + server.port() + "/eval/tlin15@";
         URL url;
@@ -117,7 +117,7 @@ public class WebServerTest {
     // tests undefined list, reassignment, mail loop, union, difference, intersection, sequence, grouping, definition, nested definition
     @Test
     public void testMultipleWebUser() throws IOException {
-        final WebServer server = new WebServer();
+        final WebServer server = new WebServer(new Environment());
         
         final String addr1 = "http://localhost:" + server.port() + "/eval/a=b@c,d@e;b";     // definition, union, sequence, undefined list
         final String addr2 = "http://localhost:" + server.port() + "/eval/b=a";             // definition
@@ -193,10 +193,10 @@ public class WebServerTest {
     // covers nested subexpressions
     @Test
     public void testNestedExpressions() throws IOException {
-        final WebServer server = new WebServer();
+        final WebServer server = new WebServer(new Environment());
 
         final String addr1 = "http://localhost:" + server.port() + "/eval/b=((b@c,d@e)!d@e)*f@g;b";     // nested grouping, union, difference, intersection
-        final String addr2 = "http://localhost:" + server.port() + "/eval/d=a;(b;c)";                   // nested sequence
+        final String addr2 = "http://localhost:" + server.port() + "/eval/d=(a;(b;c))";                   // nested sequence
         final String addr3 = "http://localhost:" + server.port() + "/eval/c=x@y";           
         final String addr4 = "http://localhost:" + server.port() + "/eval/d";
         

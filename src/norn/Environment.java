@@ -2,6 +2,7 @@ package norn;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,16 +38,32 @@ public class Environment {
     private void checkRep() {
         assert definitions != null;
         for (Name name : definitions.keySet()) {
-            System.out.println("checking key: " + name.toString());
+//            System.out.println("checking key: " + name.toString());
             // for each name in definitions, run DFS on each child node, keep track of nodes visited
             ListExpression expression = definitions.get(name);
             Set<ListExpression> visited = new HashSet<>();
-            Set<ListExpression> finalVisited = findDependencies(name, expression, visited);
-            System.out.println("finalVisited: " + finalVisited);
+            // expression's children minus those that match name PLUS dependents
+            // a = a, b@c children: {a, b@c}; minuschildren = {b@c}; minuschildrenandtheirdependents = {b@c}
+            // a = a, b@c, c@d 
+            // Union(a, Union(b@c, c@d))
+            Set<ListExpression> flattened = flatten(expression, new HashSet<>());
+            if (flattened.contains(name)) flattened.remove(name);
+            Set<ListExpression> finalVisited = findDependencies(name, flattened, visited);
+//            System.out.println("finalVisited: " + finalVisited);
 
             assert !finalVisited.contains(name) : name.toString() + " has a mail loop in its definition! Please reassign " + name.toString();
         }
-        System.out.println(definitions);
+//        System.out.println(definitions);
+    }
+    
+    public Set<ListExpression> flatten(ListExpression e, Set<ListExpression> elements) {
+        if (e.getChildren().isEmpty()) {
+            return new HashSet<>(Arrays.asList(e));
+        }
+        for (ListExpression c : e.getChildren()) {
+            elements = flatten(c, elements);
+        }
+        return elements;
     }
     
     /**
@@ -92,16 +109,16 @@ public class Environment {
      * @param visited a set of ListExpressions in the listname's dependencies
      * @return the set of ListExpressions in the listname's dependencies
      */
-    private Set<ListExpression> findDependencies(Name name, ListExpression expression, Set<ListExpression> visited) {
-        Set<ListExpression> children = expression.getChildren(this);
-        System.out.println("children of " + expression.toString() + ": " + children);
-        System.out.println("how many children: " + children.size());
+    private Set<ListExpression> findDependencies(Name name, Set<ListExpression> children, Set<ListExpression> visited) {
+        //Set<ListExpression> children = expression.getChildren();
+//        System.out.println("children of " + expression.toString() + ": " + children);
+//        System.out.println("how many children: " + children.size());
         if (children.size() != 0) {
-            System.out.println("has children!");
+//            System.out.println("has children!");
             visited.addAll(children);
             for (ListExpression child : children) {
                 if (child.equals(name)) { break; }
-                visited = findDependencies(name, child, visited);
+                visited = findDependencies(name, child.getChildren(), visited);
             }
         }
         return visited;

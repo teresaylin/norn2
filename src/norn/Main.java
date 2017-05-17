@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.Set;
 import lib6005.parser.UnableToParseException;
 
@@ -142,7 +143,8 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
         final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        WebServer server = new WebServer();
+        Environment environment = new Environment();
+        WebServer server = new WebServer(environment);
 
         while (true) {
             System.out.print("> ");
@@ -166,11 +168,18 @@ public class Main {
                     
                 } else if (input.startsWith(SAVE_COMMAND)) {
                     // handle !save
-                    save(input.substring(prefixLength).replaceAll("\\s", ""), server.getEnvironment());
+                    save(input.substring(prefixLength).replaceAll("\\s", ""), environment);
                     
                 } else {
                     // handle all list expressions
-                    Set<Recipient> parsed = ListExpression.parse(input).recipients(server.getEnvironment()); 
+                    ListExpression e = ListExpression.parse(input);
+                    Set<Recipient> parsed = ListExpression.parse(input).recipients(environment); 
+                    
+                    System.out.println("---------------------------");
+                    Set<ListExpression> flattened = environment.flatten(e, new HashSet<ListExpression>());
+                    System.out.println(flattened);
+                    System.out.println("---------------------------");
+                    
                     System.out.println(parsed.toString().replaceAll("[\\[\\]]", ""));
                 }
             } catch(IllegalArgumentException e){
