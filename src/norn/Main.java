@@ -126,6 +126,7 @@ import lib6005.parser.UnableToParseException;
  *      a = c --> [error message]
  */
 
+// Thread safety argument: TODO
 
 public class Main {
     public static final String EMPTY_LIST = "{}";
@@ -159,8 +160,10 @@ public class Main {
                     String[] fileNames = input.substring(prefixLength).replaceAll("\\s", "").split(",");
                     for(String fileName : fileNames){
                         File loadFile = new File(fileName);
-                        if ( ! loadFile.isFile())
+                        if ( ! loadFile.isFile()){
+                            System.out.println("here");
                             throw new IllegalArgumentException("file not found: \"" + loadFile + "\"");
+                        }
                         load(loadFile, server.getEnvironment());
                     }
                     
@@ -186,20 +189,22 @@ public class Main {
      * @return true if definitions were successfully saved to fileName
      */
     private static boolean save(String filename, Environment env) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            Set<Name> names = env.getNames();
-            for (Name n : names) {
-                writer.write(n.toString() + " = (" + env.getExpression(n).toString() + ")"); 
-                writer.write("; ");
+        synchronized(env){
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+                Set<Name> names = env.getNames();
+                for (Name n : names) {
+                    writer.write(n.toString() + " = (" + env.getExpression(n).toString() + ")"); 
+                    writer.write("; ");
+                }
+                writer.flush();
+                writer.close();
+                return true;
+            } catch (IOException e) {
+                System.out.println("Could not open file to writer: " + e.getMessage());
             }
-            writer.flush();
-            writer.close();
-            return true;
-        } catch (IOException e) {
-            System.out.println("Could not open file to writer: " + e.getMessage());
+            return false;
         }
-        return false;
     }
     
     /**
@@ -212,18 +217,20 @@ public class Main {
      * @throws IOException 
      */
     private static boolean load(File file, Environment env) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        try {
-            String toParse = reader.readLine();
-            ListExpression parsed = ListExpression.parse(toParse);
-            parsed.recipients(env);
-            return true;
-        } catch (IOException e) {
-            System.out.println("Invalid input, could not parse: " + e.getMessage());
-            return false;
-        }
-        finally{
-            reader.close();
+        synchronized(env) {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            try {
+                String toParse = reader.readLine();
+                ListExpression parsed = ListExpression.parse(toParse);
+                parsed.recipients(env);
+                return true;
+            } catch (IOException e) {
+                System.out.println("Invalid input, could not parse: " + e.getMessage());
+                return false;
+            }
+            finally{
+                reader.close();
+            }
         }
     }
 }
