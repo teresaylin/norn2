@@ -12,7 +12,7 @@ List expressions are sets of recipients who should receive email messages. A lis
 Expressions use the following operators: 
 - , (union)
 - ! (difference)
-- * (intersection)
+- \* (intersection)
 - = (definition)
 - ; (sequencing)
  
